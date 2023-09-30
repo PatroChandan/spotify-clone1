@@ -1,10 +1,50 @@
 import { Icon } from '@iconify/react';
 import TextInput from '../components/shared/TextInput';
 import PasswordInput from '../components/shared/PasswordInput';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { makeUnauthenticatedPOSTRequest } from '../utils/serverHelpers';
+import { useCookies } from 'react-cookie';
+import { backendUrl } from '../utils/config';
+
 
 
 const LoginComponent = () =>{
+
+    const [email,setEmail] = useState("");
+    const [password,setPassword] = useState("");
+    const [cookie,setCookie] = useCookies(["token"]);
+    const navigate = useNavigate();
+    
+    const logIn = async() =>{
+        let response = await fetch(backendUrl + '/user/login',{
+            method:"POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'projectId': 'f104bi07c490'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                appType: 'music',
+            }),
+        })
+        
+        response = await response.json();
+        if(response){
+            const token = response.token;
+            localStorage.setItem('token', token);
+            const date = new Date();
+            date.setDate(date.getDate() + 30);
+            setCookie("token",token,{path:"/",expires:date});
+            alert("Success");
+            navigate("/home")
+        }else{
+            alert("Failure");
+        }
+    }
+    
+
     return(
         <div className="w-full h-full flex flex-col items-center">
             <div className='logo p-5 border-b border-solid border-b-gray-400 w-full flex justify-center'>
@@ -14,12 +54,27 @@ const LoginComponent = () =>{
                 <div className='font-bold mb-4'>
                     To continue, log in to spotify.
                 </div>
-                <TextInput label={"Email address or username"} placeholder={"Email address or Username"} className={"my-6"}/>
-                <PasswordInput label={"Password"} placeholder={"Password"}/>
+                <TextInput label={"Email address or username"} placeholder={"Email address or Username"} className={"my-6"}
+                    value={email}
+                    setValue={setEmail}
+                />
+                <PasswordInput label={"Password"} placeholder={"Password"}
+                    value={password}
+                    setValue={setPassword}
+                />
                 <div className='w-full flex items-center justify-end my-10'>
-                    <button className='bg-green-400 text-lg font-semibold p-3 px-10 rounded-full'>
+                    <button className='bg-green-400 text-lg font-semibold p-3 w-full rounded-full'
+                    onClick={(e)=>{
+                        e.preventDefault();
+                        logIn();
+                    }}
+                    >
                         LOG IN
                     </button>
+                </div>
+                <div className='text-gray-500 w-full flex items-center justify-center py-3 font-bold'>
+                <Link to={"/update"}>Forgot your password?</Link>
+                    
                 </div>
                 <div className='w-full border border-solid border-gray-300'></div>
                 <div className='my-6 font-semibold text-lg'>

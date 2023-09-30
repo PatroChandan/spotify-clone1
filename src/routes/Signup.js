@@ -1,10 +1,36 @@
 import { Icon } from '@iconify/react';
 import TextInput from '../components/shared/TextInput';
 import PasswordInput from '../components/shared/PasswordInput';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { makeUnauthenticatedPOSTRequest } from '../utils/serverHelpers';
+import { useCookies } from 'react-cookie';
 
 
 const SignupComponent = () =>{
+    
+    const [username,setUsername] = useState("");
+    const [email,setEmail] = useState("");
+    const [password,setPassword] = useState("");
+    const [cookie,setCookie] = useCookies(["token"]);
+    const navigate = useNavigate();
+
+    const signUp = async () =>{
+        // const data = {username,email,password};
+        const response = await makeUnauthenticatedPOSTRequest("/user/signup",username,email,password);
+        if(response){
+            console.log(response.data);
+            const token = response.token;
+            const date = new Date();
+            date.setDate(date.getDate() + 30);
+            setCookie("token",token,{path:"/",expires:date});
+            alert("Success");
+            navigate("/home")
+        }else{
+            alert("Failure");
+        }
+    }
+
     return(
         <div className="w-full h-full flex flex-col items-center">
             <div className='logo p-5 border-b border-solid border-b-gray-400 w-full flex justify-center'>
@@ -14,12 +40,28 @@ const SignupComponent = () =>{
                 <div className='font-bold mb-4 text-lg'>
                     Sign up for free to start listening.
                 </div>
-                <TextInput label={"Email address"} placeholder={"Enter your Email"} className={"my-6"}/>
-                <TextInput label={"Confirm Email address"} placeholder={"Enter your Email again"} className={"my-6"}/>
-                <PasswordInput label={"Create Password"} placeholder={"Create Password"}/>
-                <TextInput label={"What should we call you?"} placeholder={"Enter a profile name"} className={"my-6"}/>
+                <TextInput label={"User Name"} placeholder={"Enter your User name"} className={"my-4"} 
+                    value={username}
+                    setValue={setUsername}
+                />
+
+                <TextInput label={"Email address"} placeholder={"Enter your Email"} className={"my-4"}
+                    value={email}
+                    setValue={setEmail}
+                />
+                
+                <PasswordInput label={"Create Password"} placeholder={"Create Password"} className={"my-4"}
+                    value={password}
+                    setValue={setPassword }
+                />
+                
                 <div className='w-full flex items-center justify-center my-10'>
-                    <button className='bg-green-400 text-lg font-semibold p-3 px-10 rounded-full'>
+                    <button className='bg-green-400 text-lg font-semibold p-3 px-10 w-full rounded-full'
+                    onClick={(e)=>{
+                        e.preventDefault();
+                        signUp();
+                    }}
+                    >
                         SIGN UP
                     </button>
                 </div>
