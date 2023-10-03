@@ -1,8 +1,3 @@
-import { Icon } from "@iconify/react"
-import spotify_logo from "../assets/images/spotify_logo_white.svg"
-import IconText from "../components/shared/IconText"
-import TextWithHover from "../components/shared/TextWithHover"
-import { Link } from "react-router-dom"
 import SingleSongCard from "../components/shared/SingleSongCard"
 import { useEffect, useState } from "react"
 import { makeAuthenticatedGETRequest } from "../utils/serverHelpers";
@@ -20,6 +15,7 @@ const MyMusic = () => {
         };
         getData();
     },[]);
+    // console.log("chand",songData);
     return(
         <LoggedInContainer>
             {/* <div className="content p-8 overflow-auto"> */}

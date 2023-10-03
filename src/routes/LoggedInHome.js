@@ -1,15 +1,8 @@
-import { Icon } from "@iconify/react"
-import spotify_logo from "../assets/images/spotify_logo_white.svg"
-import IconText from "../components/shared/IconText"
-import TextWithHover from "../components/shared/TextWithHover"
-import { Link, useNavigate } from "react-router-dom"
-import { backendUrl } from "../utils/config";
-import { useCookies } from 'react-cookie';
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {Howl, Howler} from 'howler';
 import LoggedInContainer from "../containers/LoggedInContainer"
 import { makeAuthenticatedGETRequest } from "../utils/serverHelpers"
-
 
 
 const LoggedInHome = () =>{
@@ -43,13 +36,16 @@ const PlaylistView = ({titleText,cardsData}) =>{
     <div className="text-white mt-8" >
         <div className="text-2xl font-semibold mb-5 flex justify-between">
             {titleText}
-            <button className="border-none text-sm" onClick={handleSelectAll}>Select All</button>
+            <div className="text-sm">
+                <Link to={"/details"} className="cursor-pointer hover:underline">Select All</Link>
+            </div>
         </div>
         <div className="w-full flex justify-between space-x-4">
             {
                 cardsData.slice(0,5).map((item)=>{
                     return (
                         <Card
+                            key={item._id}
                             title={item.title} 
                             name={item.artists[0].name} 
                             imgUrl={item.image}

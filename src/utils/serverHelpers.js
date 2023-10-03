@@ -20,7 +20,7 @@ export const makeUnauthenticatedPOSTRequest = async (route,username,email,passwo
 
 export const makeAuthenticatedGETRequest = async(route) =>{
     const token = getToken();
-    console.log("maheash",token);
+    // console.log("maheash",token);
     const response = await fetch(backendUrl + route, {
         method:"GET",
         headers:{

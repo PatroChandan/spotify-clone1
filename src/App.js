@@ -3,10 +3,10 @@ import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import LoginComponent from './routes/Login';
 import SignupComponent from './routes/Signup';
 import HomeComponent from './routes/Home';
+import Details from './routes/Details';
 import UpdatePassword from './routes/UpdatePassword';
 import { useCookies } from 'react-cookie';
 import LoggedInHome from './routes/LoggedInHome';
-import UploadSong from './routes/UploadSong';
 import MyMusic from './routes/MyMusic';
 import songContext from './contexts/songContext';
 import { useState } from 'react';
@@ -25,8 +25,8 @@ function App() {
               <Routes>
                   <Route path='/' />
                   <Route path='/home' element={<LoggedInHome/>}/>
-                  <Route path='/uploadSong' element={<UploadSong/>}/>
                   <Route path='/myMusic' element={<MyMusic/>}/>
+                  <Route path='/details' element={<Details/>}/>
                   <Route path='*' element={<Navigate to={'/home'}/>}/>
               </Routes>
             </songContext.Provider>

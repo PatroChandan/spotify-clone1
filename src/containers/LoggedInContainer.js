@@ -5,16 +5,33 @@ import TextWithHover from "../components/shared/TextWithHover"
 import { Link, useNavigate } from "react-router-dom"
 import { backendUrl } from "../utils/config";
 import { useCookies } from 'react-cookie';
-import { Children, useState } from "react";
+import { Children, useContext, useEffect, useState } from "react";
 import {Howl, Howler} from 'howler';
+import songContext from "../contexts/songContext"
 
 
 const LoggedInContainer = ({children}) => {
     const [cookies, setCookie, removeCookie] = useCookies(['token']);
     const [songPlayed,setSongPlayed] = useState(null);
     const [isPaused,setIsPaused] = useState(true);
+    const {currentSong,setCurrentSong} = useContext(songContext);
+    console.log("ganesh",currentSong);
 
-    const playSound = (songSrc) =>{
+    useEffect(()=>{
+        if(!currentSong){
+            return;
+        }
+        changeSong(currentSong.audio_url);
+    },[currentSong]);
+
+    const playSound = () =>{
+        if(!songPlayed){
+            return;
+        }
+        songPlayed.play();
+    }
+
+    const changeSong = (songSrc) =>{
         if(songPlayed){
             songPlayed.stop();
         }
@@ -24,6 +41,7 @@ const LoggedInContainer = ({children}) => {
         });
         setSongPlayed(sound);
         sound.play();
+        setIsPaused(false);
     };
 
     const pauseSound = () =>{
@@ -32,7 +50,7 @@ const LoggedInContainer = ({children}) => {
 
     const togglePlayPause = () =>{
         if(isPaused){
-            playSound("https://newton-project-resume-backend.s3.amazonaws.com/audio/64cf94e447ae38c3e33a7253.mp3");
+            playSound();
             setIsPaused(false);
         }else{
             pauseSound();
@@ -58,19 +76,19 @@ const LoggedInContainer = ({children}) => {
         <div className='h-full w-1/5 bg-black flex flex-col justify-between pb-10'>
             {/* This div is for logo */}
             <div>
-            <div className='logoDiv p-6'>
-                <img src={spotify_logo} alt="spotify logo" width={125}/>
-            </div>
-            <div className="py-2">
-                <IconText iconName={"material-symbols:home"} displayText={"Home"} active={true}/>
-                <IconText iconName={"majesticons:search-line"} displayText={"Search"}/>
-                <IconText iconName={"fluent:library-28-regular"} displayText={"Library"}/>
-                <IconText iconName={"mdi:music-box-multiple"} displayText={"My Music"}/>
-            </div>
-            <div className="pt-5">
-                <IconText iconName={"icon-park-solid:add"} displayText={"Create Playlist"}/>
-                <IconText iconName={"zondicons:heart"} displayText={"Liked Songs"}/>
-            </div>
+                <div className='logoDiv p-6'>
+                    <img src={spotify_logo} alt="spotify logo" width={125}/>
+                </div>
+                <div className="py-2">
+                    <IconText iconName={"material-symbols:home"} displayText={"Home"} targetLink={"/home"}/>
+                    <IconText iconName={"majesticons:search-line"} displayText={"Search"}/>
+                    <IconText iconName={"fluent:library-28-regular"} displayText={"Library"}/>
+                    <IconText iconName={"mdi:music-box-multiple"} displayText={"My Music"} targetLink={"/mymusic"}/>
+                </div>
+                <div className="pt-5">
+                    <IconText iconName={"icon-park-solid:add"} displayText={"Create Playlist"}/>
+                    <IconText iconName={"zondicons:heart"} displayText={"Liked Songs"}/>
+                </div>
             </div>
             <div className="px-5">
                 <div className="border border-gray-100 text-white w-1/3 flex px-2 py-1 rounded-full items-center justify-center hover:border-white cursor-pointer">
@@ -83,33 +101,33 @@ const LoggedInContainer = ({children}) => {
         {/* This div will be the right part(main content) */}
         <div className='h-full w-4/5 bg-app-black overflow-auto'>
             <div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-end">
-                <div className="w-1/2 flex h-full">
+                <div className="w-1/3 flex h-full">
                     <div className="w-3/5 flex justify-around items-center">
                         <TextWithHover displayText={"Premium"}/>
                         <TextWithHover displayText={"Support"}/>
-                        <TextWithHover displayText={"Download"}/>
-                        <div className="h-1/2 border-r border-white"></div>
+                        {/* <div className="h-1/2 border-r border-white"></div> */}
                     </div>
                     <div className="w-2/5 flex justify-around h-full items-center">
-                        <TextWithHover displayText={<Link to={"/uploadsong"}>Upload Song</Link> }/>
-                        <div className="bg-white h-2/3 px-8 flex items-center justify-center rounded-full font-semibold cursor-pointer" onClick={logOut}>
+                        
+                        <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
                             Log out
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="content p-8 pt-0 overflow-y-auto">
+            <div className="content p-8 pt-0 flex flex-col ">
                 {children}
+                
             </div>
         </div>
         </div>
         {/* current playing song div */}
         <div className="w-full h-1/10 bg-black bg-opacity-30 text-white flex items-center px-4">
             <div className="w-1/4 flex items-center">
-                <img src="https://newton-project-resume-backend.s3.ap-south-1.amazonaws.com/6032239a-77d0-46b3-8b02-fe2db6db3f3bsize_xl_1594912604.webp" alt="currentSongThumbnail" className="h-14 w-14 rounded"/>
+                <img src={currentSong?.thumbnail} alt="currentSongThumbnail" className="h-14 w-14 rounded"/>
                 <div className="pl-4">
-                    <div className="text-sm hover:underline cursor-pointer">Curtains</div>
-                    <div className="text-xs text-gray-500 hover:underline cursor-pointer">Ed Shreen</div>
+                    <div className="text-sm hover:underline cursor-pointer">{currentSong?.title}</div>
+                    <div className="text-xs text-gray-500 hover:underline cursor-pointer">{currentSong?.artist?.length > 0 && currentSong?.artist[0].name}</div>
                 </div>
             </div>
             <div className="w-1/2 h-full flex justify-center flex-col items-center">
