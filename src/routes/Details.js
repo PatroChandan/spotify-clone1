@@ -17,16 +17,15 @@ const LoggedInHome = () =>{
         getData();
     },[]);
     return(
-        <LoggedInContainer>
-            <PlaylistView titleText={"Focus"} cardsData={albumData}/>
-            {/* <PlaylistView titleText={"Spotify Playlist"} cardsData={focusCardsData}/>
-            <PlaylistView titleText={"Sound of India"} cardsData={focusCardsData}/> */}
-        </LoggedInContainer>
+        <LoggedInContainer cardsData={albumData}/>
+            
+            
+        
     )
 }
 
 
-const PlaylistView = ({titleText,cardsData}) =>{
+export const PlaylistView = ({titleText,cardsData}) =>{
     return (
     <div className="text-white mt-8" >
         <div className="text-2xl font-semibold mb-5">{titleText}</div>

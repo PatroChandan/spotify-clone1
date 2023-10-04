@@ -10,9 +10,12 @@ import LoggedInHome from './routes/LoggedInHome';
 import MyMusic from './routes/MyMusic';
 import songContext from './contexts/songContext';
 import { useState } from 'react';
+import SearchPage from './routes/SearchPage';
 
 function App() {
   const [currentSong,setCurrentSong] = useState(null);
+  const [songPlayed,setSongPlayed] = useState(null);
+  const [isPaused,setIsPaused] = useState(true);
   const [cookie,setCookie] = useCookies(["token"]);
   
   return (
@@ -21,12 +24,13 @@ function App() {
         {
           cookie.token ? (
             //logged in routes
-            <songContext.Provider value={{currentSong,setCurrentSong}}>
+            <songContext.Provider value={{currentSong,setCurrentSong,songPlayed,setSongPlayed,isPaused,setIsPaused}}>
               <Routes>
                   <Route path='/' />
                   <Route path='/home' element={<LoggedInHome/>}/>
                   <Route path='/myMusic' element={<MyMusic/>}/>
                   <Route path='/details' element={<Details/>}/>
+                  <Route path='/searchpage' element={<SearchPage/>}/>
                   <Route path='*' element={<Navigate to={'/home'}/>}/>
               </Routes>
             </songContext.Provider>

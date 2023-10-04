@@ -22,16 +22,14 @@ const LoggedInHome = () =>{
         navigate("/details");
     }
     return(
-        <LoggedInContainer>
-            <PlaylistView titleText={"Focus"} cardsData={albumData}/>
-            {/* <PlaylistView titleText={"Spotify Playlist"} cardsData={focusCardsData}/>
-            <PlaylistView titleText={"Sound of India"} cardsData={focusCardsData}/> */}
-        </LoggedInContainer>
+        <LoggedInContainer currActiveScrn={"home"} cardsData={albumData} limit={albumData.length}/>
+            
+        
     )
 }
 
 
-const PlaylistView = ({titleText,cardsData}) =>{
+export const PlaylistView = ({titleText,cardsData,limit}) =>{
     return (
     <div className="text-white mt-8" >
         <div className="text-2xl font-semibold mb-5 flex justify-between">
@@ -40,9 +38,17 @@ const PlaylistView = ({titleText,cardsData}) =>{
                 <Link to={"/details"} className="cursor-pointer hover:underline">Select All</Link>
             </div>
         </div>
-        <div className="w-full flex justify-between space-x-4">
+        <div className="w-full flex justify-between gap-4 flex-wrap">
             {
-                cardsData.slice(0,5).map((item)=>{
+                limit > 5?(cardsData.map((item)=>{
+                    return (
+                        <Card
+                            title={item.title} 
+                            name={item.artists[0].name} 
+                            imgUrl={item.image}
+                        />
+                    )
+                })):(cardsData.slice(0,4).map((item)=>{
                     return (
                         <Card
                             key={item._id}
@@ -51,12 +57,13 @@ const PlaylistView = ({titleText,cardsData}) =>{
                             imgUrl={item.image}
                         />
                     )
-                })
+                }))
             }
         </div>
     </div>
     )
 };
+
 
 const Card = ({title,name,imgUrl}) =>{
     return(

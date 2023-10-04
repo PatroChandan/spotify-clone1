@@ -5,24 +5,48 @@ import TextWithHover from "../components/shared/TextWithHover"
 import { Link, useNavigate } from "react-router-dom"
 import { backendUrl } from "../utils/config";
 import { useCookies } from 'react-cookie';
-import { Children, useContext, useEffect, useState } from "react";
+import { useContext, useLayoutEffect, useRef, useState } from "react";
 import {Howl, Howler} from 'howler';
 import songContext from "../contexts/songContext"
+import SearchPage from "../routes/SearchPage"
+import { PlaylistView } from "../routes/LoggedInHome"
+import { makeAuthenticatedGETRequest } from "../utils/serverHelpers";
+import SingleSongCard from "../components/shared/SingleSongCard"
 
 
-const LoggedInContainer = ({children}) => {
+const LoggedInContainer = ({currActiveScrn,cardsData,limit}) => {
     const [cookies, setCookie, removeCookie] = useCookies(['token']);
-    const [songPlayed,setSongPlayed] = useState(null);
-    const [isPaused,setIsPaused] = useState(true);
-    const {currentSong,setCurrentSong} = useContext(songContext);
+    const [isInputFocused,setIsInputFocused] = useState(false);
+    
+    const [searchText, setSearchText] = useState("");
+    const [songData, setSongData] = useState([]);
+
+    const searchSong = async () => {
+        // This function will call the search api
+        const response = await makeAuthenticatedGETRequest(
+            `music/song?search={"title":${searchText}}  `
+        );
+        setSongData(response.data);
+    };
+    
+    
+    const {currentSong,setCurrentSong,songPlayed,setSongPlayed,isPaused,setIsPaused} = useContext(songContext);
     console.log("ganesh",currentSong);
 
-    useEffect(()=>{
+    const firstUpdate = useRef(true);
+
+    useLayoutEffect(()=>{
+        //the following if statement will prevent the useEffect from running on the first render.
+        if(firstUpdate.current){
+            firstUpdate.current = false;
+            return;
+        }
         if(!currentSong){
             return;
         }
+        // console.log("me");
         changeSong(currentSong.audio_url);
-    },[currentSong]);
+    },[currentSong && currentSong.audio_url]);
 
     const playSound = () =>{
         if(!songPlayed){
@@ -80,10 +104,10 @@ const LoggedInContainer = ({children}) => {
                     <img src={spotify_logo} alt="spotify logo" width={125}/>
                 </div>
                 <div className="py-2">
-                    <IconText iconName={"material-symbols:home"} displayText={"Home"} targetLink={"/home"}/>
-                    <IconText iconName={"majesticons:search-line"} displayText={"Search"}/>
-                    <IconText iconName={"fluent:library-28-regular"} displayText={"Library"}/>
-                    <IconText iconName={"mdi:music-box-multiple"} displayText={"My Music"} targetLink={"/mymusic"}/>
+                    <IconText iconName={"material-symbols:home"} displayText={"Home"} targetLink={"/home"} active={currActiveScrn === "home"}/>
+                    <IconText iconName={"majesticons:search-line"} displayText={"Search"} targetLink={"/searchpage"} active={currActiveScrn === "search"}/>
+                    <IconText iconName={"fluent:library-28-regular"} displayText={"Library"} active={currActiveScrn === "library"}/>
+                    <IconText iconName={"mdi:music-box-multiple"} displayText={"My Music"} targetLink={"/mymusic"} active={currActiveScrn === "mymusic"}/>
                 </div>
                 <div className="pt-5">
                     <IconText iconName={"icon-park-solid:add"} displayText={"Create Playlist"}/>
@@ -100,25 +124,88 @@ const LoggedInContainer = ({children}) => {
         </div>
         {/* This div will be the right part(main content) */}
         <div className='h-full w-4/5 bg-app-black overflow-auto'>
-            <div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-end">
-                <div className="w-1/3 flex h-full">
-                    <div className="w-3/5 flex justify-around items-center">
-                        <TextWithHover displayText={"Premium"}/>
-                        <TextWithHover displayText={"Support"}/>
-                        {/* <div className="h-1/2 border-r border-white"></div> */}
+            { currActiveScrn === "search"?
+                <div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-between">
+                    <div className={`w-1/3 p-3 text-sm rounded-full bg-gray-800 px-5 flex text-white space-x-3 items-center ml-8 ${isInputFocused ? "border border-white":""}`}>
+                        <Icon icon="ic:baseline-search" className="text-lg"/>
+                        <input type="text" placeholder="What do you want to listen to?" className="w-full bg-gray-800 focus:outline-none" onFocus={()=>{
+                            setIsInputFocused(true);
+                        }} onBlur={()=>{
+                            setIsInputFocused(false);
+                        }} value={searchText}
+                        onChange={(e) => {
+                            setSearchText(e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                searchSong();
+                            }
+                        }}/>
                     </div>
-                    <div className="w-2/5 flex justify-around h-full items-center">
-                        
-                        <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
-                            Log out
+                    {/* <SearchPage/> */}
+                    <div className="w-1/3 flex h-full">
+                        <div className="w-3/5 flex justify-around items-center">
+                            <TextWithHover displayText={"Premium"}/>
+                            <TextWithHover displayText={"Support"}/>
+                            {/* <div className="h-1/2 border-r border-white"></div> */}
+                        </div>
+                        <div className="w-2/5 flex justify-around h-full items-center">
+                            
+                            <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
+                                Log out
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="content p-8 pt-0 flex flex-col ">
-                {children}
-                
-            </div>
+                :<div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-end">
+                    <div className="w-1/3 flex h-full">
+                        <div className="w-3/5 flex justify-around items-center">
+                            <TextWithHover displayText={"Premium"}/>
+                            <TextWithHover displayText={"Support"}/>
+                            {/* <div className="h-1/2 border-r border-white"></div> */}
+                        </div>
+                        <div className="w-2/5 flex justify-around h-full items-center">
+                            
+                            <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
+                                Log out
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {
+                currActiveScrn==="search"?(<div className="content p-8 pt-0 flex flex-col ">
+                    {/* {children} */}
+                    
+                    {songData.length > 0 ? (
+                    <div className="pt-10 space-y-3">
+                        <div className="text-white">
+                            Showing search results for
+                            <span className="font-bold"> {searchText}</span>
+                        </div>
+                        {songData.map((item) => {
+                            return (
+                                <SingleSongCard
+                                    info={item}
+                                    key={JSON.stringify(item)}
+                                    playSound={() => {}}
+                                />
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="text-gray-400 pt-10">
+                        Nothing to show here.
+                    </div>
+                )}
+                </div>):
+                (<div className="content p-8 pt-0 flex flex-col ">
+                    {/* {children} */}
+                    
+                    {cardsData?.length>0 && <PlaylistView titleText={"Focus"} cardsData={cardsData} limit={currActiveScrn==="home"?cardsData.length===4:cardsData.length}/>}
+                </div>
+                )
+            }
         </div>
         </div>
         {/* current playing song div */}
@@ -148,6 +235,7 @@ const LoggedInContainer = ({children}) => {
     </div>
   )
 };
+
 
 
 export default LoggedInContainer
