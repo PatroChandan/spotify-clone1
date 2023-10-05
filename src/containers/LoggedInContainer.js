@@ -24,7 +24,7 @@ const LoggedInContainer = ({currActiveScrn,cardsData,limit}) => {
     const searchSong = async () => {
         // This function will call the search api
         const response = await makeAuthenticatedGETRequest(
-            `music/song?search={"title":${searchText}}  `
+            `/music/song?search={"title":"${searchText}"}  `
         );
         setSongData(response.data);
     };
