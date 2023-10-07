@@ -17,8 +17,10 @@ const LoggedInHome = () =>{
         getData();
     },[]);
     return(
-        <LoggedInContainer cardsData={albumData}/>
-            
+        // <LoggedInContainer cardsData={albumData}/>
+        <LoggedInContainer currActiveScrn={"home"}>
+            <PlaylistView titleText={"Focus"} cardsData={albumData}/>
+        </LoggedInContainer>
             
         
     )

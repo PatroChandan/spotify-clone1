@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {Howl, Howler} from 'howler';
 import LoggedInContainer from "../containers/LoggedInContainer"
 import { makeAuthenticatedGETRequest } from "../utils/serverHelpers"
+import ListMusic from "../components/shared/ListMusic";
 
 
 const LoggedInHome = () =>{
@@ -19,10 +20,14 @@ const LoggedInHome = () =>{
     },[]);
 
     const handleSelectAll = () =>{
+        
         navigate("/details");
     }
     return(
-        <LoggedInContainer currActiveScrn={"home"} cardsData={albumData} limit={albumData.length}/>
+        // <LoggedInContainer currActiveScrn={"home"} cardsData={albumData} limit={albumData.length}/>
+        <LoggedInContainer currActiveScrn={"home"}>
+            <PlaylistView titleText={"Focus"} cardsData={albumData}/>
+        </LoggedInContainer>
             
         
     )
@@ -30,6 +35,7 @@ const LoggedInHome = () =>{
 
 
 export const PlaylistView = ({titleText,cardsData,limit}) =>{
+    console.log("sanat",cardsData);
     return (
     <div className="text-white mt-8" >
         <div className="text-2xl font-semibold mb-5 flex justify-between">
@@ -41,17 +47,20 @@ export const PlaylistView = ({titleText,cardsData,limit}) =>{
         <div className="w-full flex justify-between gap-4 flex-wrap">
             {
                 limit > 5?(cardsData.map((item)=>{
+                    
                     return (
                         <Card
+                            keyId={item._id}
                             title={item.title} 
                             name={item.artists[0].name} 
                             imgUrl={item.image}
                         />
                     )
                 })):(cardsData.slice(0,4).map((item)=>{
+                    console.log(item)
                     return (
                         <Card
-                            key={item._id}
+                            keyId={item._id}
                             title={item.title} 
                             name={item.artists[0].name} 
                             imgUrl={item.image}
@@ -65,9 +74,17 @@ export const PlaylistView = ({titleText,cardsData,limit}) =>{
 };
 
 
-const Card = ({title,name,imgUrl}) =>{
+const Card = ({keyId,title,name,imgUrl}) =>{
+    const navigate = useNavigate();
+    const handleListOfMusic = () =>{
+        // const propsToPass = {
+           console.log("gfcgc",keyId);
+        //    prop1: key
+        // };
+        navigate(`/listmusic/${keyId}`);
+    }
     return(
-        <div className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg" style={{maxHeight:500, minWidth:200}}>
+        <div className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg" style={{maxHeight:500, minWidth:200}} key={keyId} onClick={()=>handleListOfMusic()}>
             <div className="pb-4 pt-2">
                 <img className="w-full rounded-md"  
                 src={imgUrl}

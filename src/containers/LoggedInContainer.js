@@ -12,9 +12,10 @@ import SearchPage from "../routes/SearchPage"
 import { PlaylistView } from "../routes/LoggedInHome"
 import { makeAuthenticatedGETRequest } from "../utils/serverHelpers";
 import SingleSongCard from "../components/shared/SingleSongCard"
+import DropDown from "../components/shared/DropDown"
 
 
-const LoggedInContainer = ({currActiveScrn,cardsData,limit}) => {
+const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
     const [cookies, setCookie, removeCookie] = useCookies(['token']);
     const [isInputFocused,setIsInputFocused] = useState(false);
     
@@ -154,6 +155,7 @@ const LoggedInContainer = ({currActiveScrn,cardsData,limit}) => {
                             <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
                                 Log out
                             </div>
+                            {/* <DropDown/> */}
                         </div>
                     </div>
                 </div>
@@ -169,6 +171,9 @@ const LoggedInContainer = ({currActiveScrn,cardsData,limit}) => {
                             <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
                                 Log out
                             </div>
+                            {/* jbjbkjjb */}
+                            {/* <DropDown/> */}
+                            {/* mb */}
                         </div>
                     </div>
                 </div>
@@ -200,9 +205,9 @@ const LoggedInContainer = ({currActiveScrn,cardsData,limit}) => {
                 )}
                 </div>):
                 (<div className="content p-8 pt-0 flex flex-col ">
-                    {/* {children} */}
+                    {children}
                     
-                    {cardsData?.length>0 && <PlaylistView titleText={"Focus"} cardsData={cardsData} limit={currActiveScrn==="home"?cardsData.length===4:cardsData.length}/>}
+                    {/* {cardsData?.length>0 && <PlaylistView titleText={"Focus"} cardsData={cardsData} limit={currActiveScrn==="home"?cardsData.length===4:cardsData.length}/>} */}
                 </div>
                 )
             }
