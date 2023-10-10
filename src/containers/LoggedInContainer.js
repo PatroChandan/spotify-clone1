@@ -5,22 +5,35 @@ import TextWithHover from "../components/shared/TextWithHover"
 import { Link, useNavigate } from "react-router-dom"
 import { backendUrl } from "../utils/config";
 import { useCookies } from 'react-cookie';
-import { useContext, useLayoutEffect, useRef, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {Howl, Howler} from 'howler';
 import songContext from "../contexts/songContext"
 import SearchPage from "../routes/SearchPage"
 import { PlaylistView } from "../routes/LoggedInHome"
 import { makeAuthenticatedGETRequest } from "../utils/serverHelpers";
 import SingleSongCard from "../components/shared/SingleSongCard"
-import DropDown from "../components/shared/DropDown"
+import DropDown from "../components/shared/DropDown";
+
 
 
 const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
+    Howler.volume(1.0);
     const [cookies, setCookie, removeCookie] = useCookies(['token']);
     const [isInputFocused,setIsInputFocused] = useState(false);
     
     const [searchText, setSearchText] = useState("");
     const [songData, setSongData] = useState([]);
+    const [progress, setProgress] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [songDuration, setSongDuration] = useState(0);
+    const [currentSongIndex, setCurrentSongIndex] = useState(null);
+    const [arrayLength, setArrayLength] = useState(0);
+
+  // Callback function to set the current song's index
+    const handleCurrentSongIndexChange = (index, length) => {
+        setCurrentSongIndex(index);
+        setArrayLength(length);
+    };
 
     const searchSong = async () => {
         // This function will call the search api
@@ -32,9 +45,34 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
     
     
     const {currentSong,setCurrentSong,songPlayed,setSongPlayed,isPaused,setIsPaused} = useContext(songContext);
-    console.log("ganesh",currentSong);
+    // console.log("ganesh",currentSong);
 
     const firstUpdate = useRef(true);
+    const animationRef = useRef();
+
+    // const playlist = songData;
+
+    // const currentSongIndex = currentSong ? playlist.findIndex((song) => song.id === currentSong.id) : -1;
+    // console.log("index",currentSongIndex);
+
+    const updateProgress = () => {
+        if (songPlayed && songPlayed.playing()) {
+            const currentTime = songPlayed.seek();
+            if (currentTime !== null) {
+                setCurrentTime(currentTime);
+                setProgress((currentTime / songDuration) * 100);
+            }
+        }
+
+        // Request the next animation frame
+        animationRef.current = requestAnimationFrame(updateProgress);
+    };
+
+    useEffect(() => {
+        animationRef.current = requestAnimationFrame(updateProgress);
+        // Clear animation frame on component unmount
+        return () => cancelAnimationFrame(animationRef.current);
+    }, [songPlayed]);
 
     useLayoutEffect(()=>{
         //the following if statement will prevent the useEffect from running on the first render.
@@ -62,7 +100,21 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
         }
         let sound = new Howl({
             src: [songSrc],
-            html5: true
+            html5: true,
+            onend: () => {
+                // Reset currentTime when the song ends
+                setCurrentTime(0);
+            },
+            onplay: () => {
+                // Set the song duration when it starts playing
+                setSongDuration(sound.duration());
+                setCurrentTime(songPlayed.seek());
+                // Start updating progress
+                updateProgress();
+            },
+            onpause: () => {
+                // Handle pause event if needed
+            },
         });
         setSongPlayed(sound);
         sound.play();
@@ -70,7 +122,10 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
     };
 
     const pauseSound = () =>{
-        songPlayed.pause();
+        if (songPlayed) {
+            songPlayed.pause();
+            setIsPaused(true);
+        }
     };
 
     const togglePlayPause = () =>{
@@ -82,16 +137,93 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
             setIsPaused(true);
         }
     }
+    const handleNext = () => {
+        // Add logic to play the next song
+        // You may need to modify your data structure to keep track of the playlist or queue
+        // and determine the next song to play
+        // For example, you can use an index to keep track of the current song in the playlist
+        // and increment the index to get the next song.
+    
+        // Example (modify as needed):
+        const currentIndex = currentSongIndex;
+        const nextIndex = (currentIndex + 1) % arrayLength.length; // Circular next
+        const nextSong = arrayLength[nextIndex];
+    
+        // Change the current song to the next song
+        setCurrentSong(nextSong);
+      };
+    
+      const handlePrevious = () => {
+        // Add logic to play the previous song
+        // Similar to handleNext, you need to determine the previous song to play
+    
+        // Example (modify as needed):
+        const currentIndex = currentSongIndex;
+        const previousIndex = (currentIndex - 1 + arrayLength.length) % arrayLength.length; // Circular previous
+        const previousSong = arrayLength[previousIndex];
+    
+        // Change the current song to the previous song
+        setCurrentSong(previousSong);
+      };
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+        const formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+        return `${formattedMinutes}:${formattedSeconds}`;
+    };
 
+    const handleSeek = (e) => {
+        const seekTime = (e.target.value / 100) * songPlayed.duration();
+        if (songPlayed) {
+            songPlayed.seek(seekTime);
+            setCurrentTime(seekTime);
+        }
+    };
+
+    const handleVolumeChange = (e) => {
+        const volumeLevel = e.target.value / 100;
+        songPlayed.volume(volumeLevel);
+    };
+    
     const navigate = useNavigate();
-   const logOut = () =>{
-    removeCookie(['token']);
-    // localStorage.removeItem("token");
-    // cookies.remove("token");
-    // navigate("/login");
+    const logOut = () =>{
+        try {
+            console.log("Logging out...");
+            removeCookie(['token']);
+            // localStorage.removeItem("token");
+            // cookies.remove("token");
+            navigate("/login");
+        } catch (error) {
+            console.error("Error during logout:", error);
+        }
 
-   }
+    }
 
+    // console.log("songDuration", songDuration);
+    // console.log("currentTime", currentTime);
+
+    // profile drop down start
+    
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const closeDropdown = () => {
+        setIsDropdownOpen(false);
+    };
+
+//   const logOut = () => {
+//     // Add logic for logging out, e.g., removing cookies
+//     // removeCookie(['token']);
+//     localStorage.removeItem("token");
+//     // Additional logout logic can be added here
+//     // ...
+//     closeDropdown(); // Close the dropdown after logging out
+//   };
+    // profile drop down end
   
 
   return (
@@ -152,8 +284,35 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                         </div>
                         <div className="w-2/5 flex justify-around h-full items-center">
                             
-                            <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
+                            {/* <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
                                 Log out
+                            </div> */}
+                            <div className="relative">
+                                <div
+                                    className="cursor-pointer bg-gray-200 rounded-full"
+                                    onClick={toggleDropdown}
+                                    onBlur={closeDropdown}
+                                    tabIndex={0}
+                                >
+                                    {/* The icon or profile image that triggers the dropdown */}
+                                    <Icon icon="gg:profile" className='w-7 h-7'/>
+                                </div>
+
+                                {isDropdownOpen && (
+                                    <div className="absolute top-10 right-0 bg-white p-4 shadow-md rounded-md">
+                                    {/* Dropdown content, e.g., user options */}
+                                    {/* <DropDown /> */}
+                                        <div className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md">Premium</div>
+                                    
+
+                                        <div
+                                            className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md"
+                                            onClick={logOut}
+                                        >
+                                            Sign out
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             {/* <DropDown/> */}
                         </div>
@@ -166,11 +325,47 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                             <TextWithHover displayText={"Support"}/>
                             {/* <div className="h-1/2 border-r border-white"></div> */}
                         </div>
-                        <div className="w-2/5 flex justify-around h-full items-center">
+                        <div className="w-2/5 flex justify-around h-full items-center relative">
                             
-                            <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
+                            {/* <div className="bg-white text-lg px-4 flex items-center justify-center rounded-full font-light cursor-pointer" onClick={logOut}>
                                 Log out
+                            </div> */}
+                            <div className="relative">
+                                <div
+                                    className="cursor-pointer bg-gray-200 rounded-full"
+                                    onClick={toggleDropdown}
+                                    onBlur={closeDropdown}
+                                    tabIndex={0}
+                                >
+                                    {/* The icon or profile image that triggers the dropdown */}
+                                    <Icon icon="gg:profile" className='w-7 h-7'/>
+                                </div>
+
+                                {isDropdownOpen && (
+                                    <div className="absolute top-10 right-0 bg-white p-4 shadow-md rounded-md">
+                                    {/* Dropdown content, e.g., user options */}
+                                    {/* <DropDown /> */}
+                                        <div className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md">Premium</div>
+                                    
+
+                                        <div
+                                            className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md"
+                                            onClick={logOut}
+                                        >
+                                            Sign out
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+                            {/* <div className="bg-white text-lg flex items-center justify-center rounded-full font-light cursor-pointer inline-block" >
+                                <Icon icon="gg:profile" className='w-7 h-7'/>
+                            </div>
+                            <div className="absolute bg-white p-4 w-52 shadow-lg left-14 top-24">
+                                <ul>
+                                    <li className="p-2 text-lg cursor-pointer rounded hover:bg-blue-100">Premium</li>
+                                    <li className="p-2 text-lg cursor-pointer rounded hover:bg-blue-100">Log out</li>
+                                </ul>
+                            </div> */}
                             {/* jbjbkjjb */}
                             {/* <DropDown/> */}
                             {/* mb */}
@@ -204,7 +399,7 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                     </div>
                 )}
                 </div>):
-                (<div className="content p-8 pt-0 flex flex-col ">
+                (<div className="content p-8 pt-0 flex flex-col justify">
                     {children}
                     
                     {/* {cardsData?.length>0 && <PlaylistView titleText={"Focus"} cardsData={cardsData} limit={currActiveScrn==="home"?cardsData.length===4:cardsData.length}/>} */}
@@ -226,16 +421,26 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                 <div className="flex w-1/3 justify-between items-center">
                     {/* song control */}
                     <Icon icon="ph:shuffle-light" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white"/>
-                    <Icon icon="ic:baseline-skip-previous" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white"/>
+                    <Icon icon="ic:baseline-skip-previous" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white" onClick={handlePrevious}/>
                     <Icon icon={isPaused?"ic:baseline-play-circle":"ic:baseline-pause-circle"} fontSize={40} className="cursor-pointer text-gray-500 hover:text-white"
                         onClick={togglePlayPause}
                     />
-                    <Icon icon="ic:baseline-skip-next" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white"/>
+                    <Icon icon="ic:baseline-skip-next" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white" onClick={handleNext}/>
                     <Icon icon="ph:repeat-light" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white"/>
                 </div>
                 {/* <div>progress bar</div> */}
+                <div className="progress w-full flex justify-center  items-center">
+                    <span className="time current">{formatTime(currentTime)}</span>
+                    <input type="range" className="w-1/2" min="0" max={songPlayed?.duration()} step="1" value={currentTime} onChange={handleSeek}/>
+                    <span className="time">{formatTime(songPlayed?.duration())}</span>
+                </div>
             </div>
-            <div className="w-1/4 flex justify-end">hello</div>
+            <div className="w-1/4 flex justify-end">
+                <div className="w-full flex justify-end  items-center ">
+                    <input type="range" className="w-1/2 cursor-pointer"  onChange={handleVolumeChange}/>
+                    <Icon icon="mingcute:volume-fill" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white"/>
+                </div>
+            </div>
         </div>
     </div>
   )

@@ -4,8 +4,9 @@ import { makeAuthenticatedGETRequest } from "../utils/serverHelpers";
 import {Howl, Howler} from 'howler';
 import LoggedInContainer from "../containers/LoggedInContainer"
 
-const MyMusic = () => {
+const MyMusic = ({onCurrentSongIndexChange }) => {
     const [songData,setSongData] = useState([]);
+    
 
     useEffect(()=>{
         const getData = async () =>{
@@ -15,6 +16,11 @@ const MyMusic = () => {
         };
         getData();
     },[]);
+
+    const handlePlaySound = (index) => {
+        // Call the callback function with the current song's index
+        onCurrentSongIndexChange(index, songData);
+    };
     // console.log("chand",songData);
     return(
         <LoggedInContainer currActiveScrn={"mymusic"}>
@@ -23,8 +29,8 @@ const MyMusic = () => {
                     My Songs
                 </div>
                 <div className="space-y-3 overflow-auto">
-                    {songData.map((item)=>{
-                        return <SingleSongCard info={item} playSound={()=>{}}/>
+                    {songData?.map((item,index)=>{
+                        return <SingleSongCard key={index} info={item} playSound={()=>{handlePlaySound(index)}}/>
                     })}
                 </div>
             {/* </div> */}

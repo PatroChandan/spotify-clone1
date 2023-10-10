@@ -19,7 +19,7 @@ const LoggedInHome = () =>{
     return(
         // <LoggedInContainer cardsData={albumData}/>
         <LoggedInContainer currActiveScrn={"home"}>
-            <PlaylistView titleText={"Focus"} cardsData={albumData}/>
+            <PlaylistView titleText={"Top this week"} cardsData={albumData}/>
         </LoggedInContainer>
             
         
@@ -36,6 +36,7 @@ export const PlaylistView = ({titleText,cardsData}) =>{
                 cardsData.map((item)=>{
                     return (
                         <Card
+                            keyId={item._id}
                             title={item.title} 
                             name={item.artists[0].name} 
                             imgUrl={item.image}
@@ -48,20 +49,20 @@ export const PlaylistView = ({titleText,cardsData}) =>{
     )
 };
 
-const Card = ({title,name,imgUrl}) =>{
+const Card = ({keyId,title,name,imgUrl}) =>{
     const navigate = useNavigate();
     const handleListOfMusic = () =>{
-        navigate("/mymusic")
+        navigate(`/listmusic/${keyId}`);
     }
     return(
-        <div className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg" style={{maxHeight:400, minWidth:200}} onClick={handleListOfMusic}>
+        <div className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg" style={{maxHeight:500, minWidth:200}} key={keyId} onClick={()=>handleListOfMusic()}>
             <div className="pb-4 pt-2">
                 <img className="w-full rounded-md"  
                 src={imgUrl}
                  alt="label"/>
             </div>
-            <div className="text-white text-sm font-semi-bold py-3 " style={{overflow:"hidden"}}>{title}</div>
-            <div className="text-gray-500 text-sm" style={{overflow:"hidden"}}>{name}</div>
+            <div className="text-white text-sm font-semi-bold py-3 " >{title}</div>
+            <div className="text-gray-500 text-sm">{name}</div>
         </div>
     )
 }

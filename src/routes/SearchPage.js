@@ -7,6 +7,7 @@ const SearchPage = () =>{
     const [isInputFocused,setIsInputFocused] = useState(false);
     // const [searchText,setSearchText] = useState("");
     // const [songData,setSongData] = useState([]);
+    
 
     
     return(

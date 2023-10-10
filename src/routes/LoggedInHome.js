@@ -18,7 +18,8 @@ const LoggedInHome = () =>{
         };
         getData();
     },[]);
-
+    
+    // console.log("album",albumData);
     const handleSelectAll = () =>{
         
         navigate("/details");
@@ -26,7 +27,7 @@ const LoggedInHome = () =>{
     return(
         // <LoggedInContainer currActiveScrn={"home"} cardsData={albumData} limit={albumData.length}/>
         <LoggedInContainer currActiveScrn={"home"}>
-            <PlaylistView titleText={"Focus"} cardsData={albumData}/>
+            <PlaylistView titleText={"Top this week"} cardsData={albumData}/>
         </LoggedInContainer>
             
         
@@ -35,7 +36,7 @@ const LoggedInHome = () =>{
 
 
 export const PlaylistView = ({titleText,cardsData,limit}) =>{
-    console.log("sanat",cardsData);
+    // console.log("album",cardsData);
     return (
     <div className="text-white mt-8" >
         <div className="text-2xl font-semibold mb-5 flex justify-between">
@@ -46,7 +47,7 @@ export const PlaylistView = ({titleText,cardsData,limit}) =>{
         </div>
         <div className="w-full flex justify-between gap-4 flex-wrap">
             {
-                limit > 5?(cardsData.map((item)=>{
+                limit > 5?(cardsData?.map((item)=>{
                     
                     return (
                         <Card
@@ -56,7 +57,7 @@ export const PlaylistView = ({titleText,cardsData,limit}) =>{
                             imgUrl={item.image}
                         />
                     )
-                })):(cardsData.slice(0,4).map((item)=>{
+                })):(cardsData.slice(0,4)?.map((item)=>{
                     console.log(item)
                     return (
                         <Card
@@ -78,7 +79,7 @@ const Card = ({keyId,title,name,imgUrl}) =>{
     const navigate = useNavigate();
     const handleListOfMusic = () =>{
         // const propsToPass = {
-           console.log("gfcgc",keyId);
+        //    console.log("gfcgc",keyId);
         //    prop1: key
         // };
         navigate(`/listmusic/${keyId}`);

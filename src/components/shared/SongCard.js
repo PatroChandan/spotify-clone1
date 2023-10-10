@@ -2,8 +2,12 @@ import { useContext } from "react"
 import songContext from "../../contexts/songContext"
 const SongCard = ({infor,playSound}) =>{
     const {currentSong,setCurrentSong} = useContext(songContext);
+    // console.log("songCard",infor)
     return (
         <div className="flex hover:bg-gray-400 hover:bg-opacity-20 p-2 rounded-sm" onClick={()=>{setCurrentSong(infor)}}>
+            {/* <div className="w-12 h-12 bg-cover bg-center" style={{
+                backgroundImage:`url("${infor.image}")`
+                }}></div>  */}
             <div className="w-12 h-12 bg-cover bg-center" style={{
                 backgroundImage:`url("${infor.image}")`
                 }}></div> 
