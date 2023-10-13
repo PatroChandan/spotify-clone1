@@ -8,26 +8,69 @@ import ListMusic from "../components/shared/ListMusic";
 
 const LoggedInHome = () =>{
     const [albumData,setAlbumData] = useState([]);
-    const navigate = useNavigate();
+    const [romaticData,setRomaticData] = useState([]);
+    const [excitedData,setExcitedData] = useState([]);
+    const [happyData,setHappyData] = useState([]);
+    const [sadData,setSadData] = useState([]);
+    
 
     useEffect(()=>{
         const getData = async () =>{
             const response = await makeAuthenticatedGETRequest("/music/album");
             // console.log("chandan",response);
+            // let newArray = response.data.filter((el)=>"romantic"===el.mood)
             setAlbumData(response.data);
+            // setRomaticData(newArray)
         };
         getData();
     },[]);
+    // useEffect(()=>{
+    //     const getData = async () =>{
+    //         const response = await makeAuthenticatedGETRequest(`/music/song?filter={"mood":"romantic"}`);
+    //         // console.log("chandan",response);
+    //         setRomaticData(response.data);
+    //     };
+    //     getData();
+    // },[]);
+    // useEffect(()=>{
+    //     const getData = async () =>{
+    //         const response = await makeAuthenticatedGETRequest(`/music/song?filter={"mood":"excited"}`);
+    //         // console.log("chandan",response);
+    //         setExcitedData(response.data);
+    //     };
+    //     getData();
+    // },[]);
+    // useEffect(()=>{
+    //     const getData = async () =>{
+    //         const response = await makeAuthenticatedGETRequest(`/music/song?filter={"mood":"happy"}`);
+    //         // console.log("chandan",response);
+    //         setHappyData(response.data);
+    //     };
+    //     getData();
+    // },[]);
+    // useEffect(()=>{
+    //     const getData = async () =>{
+    //         const response = await makeAuthenticatedGETRequest(`/music/song?filter={"mood":"sad"}`);
+    //         // console.log("chandan",response);
+    //         setSadData(response.data);
+    //     };
+    //     getData();
+    // },[]);
     
     // console.log("album",albumData);
-    const handleSelectAll = () =>{
-        
-        navigate("/details");
-    }
+    console.log("romatic",romaticData);
+    console.log("excited",excitedData);
+    console.log("happy",happyData);
+    console.log("sad",sadData);
+    
     return(
         // <LoggedInContainer currActiveScrn={"home"} cardsData={albumData} limit={albumData.length}/>
         <LoggedInContainer currActiveScrn={"home"}>
             <PlaylistView titleText={"Top this week"} cardsData={albumData}/>
+            {/* <PlaylistView titleText={"Romantic"} cardsData={romaticData}/> */}
+            {/* <PlaylistView titleText={"Excited"} cardsData={excitedData}/>
+            <PlaylistView titleText={"Happy"} cardsData={happyData}/>
+            <PlaylistView titleText={"Sad"} cardsData={sadData}/> */}
         </LoggedInContainer>
             
         
@@ -35,7 +78,16 @@ const LoggedInHome = () =>{
 }
 
 
-export const PlaylistView = ({titleText,cardsData,limit}) =>{
+export const PlaylistView = ({titleText,cardsData}) =>{
+    // if (!cardsData) {
+    //     return <div>Loading...</div>;
+    // }
+    // const navigate = useNavigate();
+    // const handleSelectAll = () =>{
+    //     if (cardsData) {
+    //         navigate(`/details/${cardsData}`);
+    //     }
+    // }
     // console.log("album",cardsData);
     return (
     <div className="text-white mt-8" >
@@ -43,21 +95,13 @@ export const PlaylistView = ({titleText,cardsData,limit}) =>{
             {titleText}
             <div className="text-sm">
                 <Link to={"/details"} className="cursor-pointer hover:underline">Select All</Link>
+                {/* <div className="cursor-pointer hover:underline" onClick={handleSelectAll}>Select All</div> */}
             </div>
         </div>
         <div className="w-full flex justify-between gap-4 flex-wrap">
             {
-                limit > 5?(cardsData?.map((item)=>{
-                    
-                    return (
-                        <Card
-                            keyId={item._id}
-                            title={item.title} 
-                            name={item.artists[0].name} 
-                            imgUrl={item.image}
-                        />
-                    )
-                })):(cardsData.slice(0,4)?.map((item)=>{
+               
+                    cardsData.slice(0,4)?.map((item)=>{
                     console.log(item)
                     return (
                         <Card
@@ -67,7 +111,8 @@ export const PlaylistView = ({titleText,cardsData,limit}) =>{
                             imgUrl={item.image}
                         />
                     )
-                }))
+                })
+                
             }
         </div>
     </div>

@@ -64,7 +64,7 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
             }
         }
 
-        // Request the next animation frame
+      
         animationRef.current = requestAnimationFrame(updateProgress);
     };
 
@@ -84,8 +84,8 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
             return;
         }
         // console.log("me");
-        changeSong(currentSong.audio_url);
-    },[currentSong && currentSong.audio_url]);
+        changeSong(currentSong.audio_url || currentSong.songs.audio_url);
+    },[currentSong && currentSong.audio_url ||currentSong && currentSong.songs.audio_url]);
 
     const playSound = () =>{
         if(!songPlayed){
@@ -102,19 +102,17 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
             src: [songSrc],
             html5: true,
             onend: () => {
-                // Reset currentTime when the song ends
+                
                 setCurrentTime(0);
             },
             onplay: () => {
-                // Set the song duration when it starts playing
+                
                 setSongDuration(sound.duration());
                 setCurrentTime(songPlayed.seek());
-                // Start updating progress
+                
                 updateProgress();
             },
-            onpause: () => {
-                // Handle pause event if needed
-            },
+            
         });
         setSongPlayed(sound);
         sound.play();
@@ -138,33 +136,22 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
         }
     }
     const handleNext = () => {
-        // Add logic to play the next song
-        // You may need to modify your data structure to keep track of the playlist or queue
-        // and determine the next song to play
-        // For example, you can use an index to keep track of the current song in the playlist
-        // and increment the index to get the next song.
-    
-        // Example (modify as needed):
+        
         const currentIndex = currentSongIndex;
-        const nextIndex = (currentIndex + 1) % arrayLength.length; // Circular next
+        const nextIndex = (currentIndex + 1) % arrayLength.length; 
         const nextSong = arrayLength[nextIndex];
     
-        // Change the current song to the next song
         setCurrentSong(nextSong);
-      };
+    };
     
-      const handlePrevious = () => {
-        // Add logic to play the previous song
-        // Similar to handleNext, you need to determine the previous song to play
+    const handlePrevious = () => {
     
-        // Example (modify as needed):
-        const currentIndex = currentSongIndex;
-        const previousIndex = (currentIndex - 1 + arrayLength.length) % arrayLength.length; // Circular previous
-        const previousSong = arrayLength[previousIndex];
-    
-        // Change the current song to the previous song
-        setCurrentSong(previousSong);
-      };
+    const currentIndex = currentSongIndex;
+    const previousIndex = (currentIndex - 1 + arrayLength.length) % arrayLength.length; 
+    const previousSong = arrayLength[previousIndex];
+
+    setCurrentSong(previousSong);
+    };
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
@@ -174,8 +161,8 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
     };
 
     const handleSeek = (e) => {
-        const seekTime = (e.target.value / 100) * songPlayed.duration();
-        if (songPlayed) {
+        if (songPlayed !== null) {
+            const seekTime = (e.target.value / 100) * songPlayed.duration();
             songPlayed.seek(seekTime);
             setCurrentTime(seekTime);
         }

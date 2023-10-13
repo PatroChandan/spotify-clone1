@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import LoggedInContainer from "../containers/LoggedInContainer"
 import { makeAuthenticatedGETRequest } from "../utils/serverHelpers"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 
 const LoggedInHome = () =>{
     const [albumData,setAlbumData] = useState([]);
-    
+    // const {albumData}= useParams();
 
     useEffect(()=>{
         const getData = async () =>{
@@ -19,6 +19,7 @@ const LoggedInHome = () =>{
     return(
         // <LoggedInContainer cardsData={albumData}/>
         <LoggedInContainer currActiveScrn={"home"}>
+            {/* <PlaylistView titleText={"Top this week"} cardsData={albumData}/> */}
             <PlaylistView titleText={"Top this week"} cardsData={albumData}/>
         </LoggedInContainer>
             
@@ -28,12 +29,16 @@ const LoggedInHome = () =>{
 
 
 export const PlaylistView = ({titleText,cardsData}) =>{
+    if (!Array.isArray(cardsData)) {
+        // Handle the case when cardsData is not an array
+        return <div>Error: cardsData is not an array</div>;
+    }
     return (
     <div className="text-white mt-8" >
         <div className="text-2xl font-semibold mb-5">{titleText}</div>
         <div className="w-full flex justify-between gap-6 overflow-auto flex-wrap">
             {
-                cardsData.map((item)=>{
+                cardsData?.map((item)=>{
                     return (
                         <Card
                             keyId={item._id}

@@ -27,14 +27,9 @@ const ListMusic = ({key}) =>{
         const getData = async () =>{
             const response = await makeAuthenticatedGETRequest("/music/album");
             // console.log("chandan",response);
-            let newArray = response.data.filter((el)=>id===el._id).map((item)=>({...item,
-                artists: item.artists.map((artist) => ({
-                    ...artist,
-                    audio_url: `https://newton-project-resume-backend.s3.amazonaws.com/audio/${artist.songs}.mp3`, // Store the "songs" array in the new key
-                  }),)
-                // audio_url:`https://newton-project-resume-backend.s3.amazonaws.com/audio/${item[0]?.artists.songs[0]}.mp3`}),
-                }));
-            // setSongData(response.data);
+            let newArray = response.data.filter((el)=>id===el._id)
+           
+
             setSongData(newArray);
         };
         getData();
@@ -43,9 +38,20 @@ const ListMusic = ({key}) =>{
 
     useEffect(() => {
         // Create the Howl instance when the component mounts
+        if (songData.length > 0 && Array.isArray(songData[0]?.songs)) {
+        let currentSongIndex = 0;
         const sound = new Howl({
-            src: [songData.audio_url],
-            html5: true
+            src: [songData?.songs[currentSongIndex].audio_url],
+            html5: true,
+            onend: () => {
+                // Play the next song when the current song ends
+                currentSongIndex = (currentSongIndex + 1) % songData?.songs.length;
+                const nextSong = songData?.songs[currentSongIndex];
+                if (nextSong) {
+                    setSongDuartion(new Howl({ src: [nextSong.audio_url], html5: true }));
+                    setCurrentSong(nextSong.audio_url);
+                }
+            },
         });
 
         setSongDuartion(sound);
@@ -54,7 +60,12 @@ const ListMusic = ({key}) =>{
         return () => {
             sound.unload();
         };
-    }, [songData.audio_url]);
+    }
+    }, [songData[0]?.songs?.audio_url,setCurrentSong]);
+
+    const handleSongSelection = (selectedSong) => {
+        setCurrentSong(selectedSong);
+    };
     return(
         <LoggedInContainer>
             <div className="text-white text-xl font-semibold pb-4 pl-2 pt-8">
@@ -64,21 +75,21 @@ const ListMusic = ({key}) =>{
                 {/* {songData.artists?.map((item)=>{
                     return <SongCard infor={item} playSound={()=>{}}/>
                 })} */}
-                {songData[0]?.artists?.map((item)=>{
-                    return(<div className="flex hover:bg-gray-400 hover:bg-opacity-20 p-2 rounded-sm" onClick={()=>{setCurrentSong(songData)}}>
+                {songData[0]?.songs?.map((item)=>{
+                    return(<div className="flex hover:bg-gray-400 hover:bg-opacity-20 p-2 rounded-sm" onClick={()=>{handleSongSelection(item)}}>
                         <div className="w-12 h-12 bg-cover bg-center" >
-                            <img src={item.image}/>
+                            <img src={item.thumbnail}/>
                         </div> 
                         <div className="flex w-full">
                             <div className="text-white flex justify-center flex-col pl-4 w-4/6 truncate">
-                                <div className="cursor-pointer truncate hover:underline">{item.description}</div>
+                                <div className="cursor-pointer truncate hover:underline">{item.title}</div>
                                 <div className="text-xs text-gray-400 cursor-pointer truncate hover:underline">{item.name}</div>
                             </div>
                             <div className="w-1/6 flex items-center justify-center text-gray-400 text-sm">
                                 <Icon icon="icon-park-outline:like" className="text-xl"/>
                             </div>
                             <div className="w-1/6 flex items-center justify-center text-gray-400 text-sm">
-                                <div>{songDuartion ? formatTime(songDuartion.duration()) : 'Loading...'}</div>
+                                <div className="duration">{songDuartion ? formatTime(songDuartion.duration()) : 'Loading...'}</div>
                             </div>
                         </div>
                     </div>)
