@@ -161,7 +161,7 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
     };
 
     const handleSeek = (e) => {
-        if (songPlayed !== null) {
+        if (songPlayed ) {
             const seekTime = (e.target.value / 100) * songPlayed.duration();
             songPlayed.seek(seekTime);
             setCurrentTime(seekTime);

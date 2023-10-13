@@ -3,7 +3,7 @@ import LoggedInContainer from "../../containers/LoggedInContainer"
 import { makeAuthenticatedGETRequest } from "../../utils/serverHelpers";
 import { useLocation, useParams } from "react-router-dom";
 import songContext from "../../contexts/songContext"
-import SongCard from "./SongCard";
+
 import { Icon } from '@iconify/react';
 import {Howl, Howler} from 'howler';
 
@@ -18,7 +18,7 @@ const formatTime = (seconds) => {
 const ListMusic = ({key}) =>{
     const {currentSong,setCurrentSong} = useContext(songContext);
     const [songData,setSongData] = useState([]);
-    const location = useLocation();
+    // const location = useLocation();
     const {id} = useParams();
     const [songDuartion, setSongDuartion] = useState(null);
     // console.log("chandan",id);
@@ -72,9 +72,7 @@ const ListMusic = ({key}) =>{
                 My Songs
             </div>
             <div className="space-y-3 overflow-auto">
-                {/* {songData.artists?.map((item)=>{
-                    return <SongCard infor={item} playSound={()=>{}}/>
-                })} */}
+            
                 {songData[0]?.songs?.map((item)=>{
                     return(<div className="flex hover:bg-gray-400 hover:bg-opacity-20 p-2 rounded-sm" onClick={()=>{handleSongSelection(item)}}>
                         <div className="w-12 h-12 bg-cover bg-center" >
@@ -86,7 +84,7 @@ const ListMusic = ({key}) =>{
                                 <div className="text-xs text-gray-400 cursor-pointer truncate hover:underline">{item.name}</div>
                             </div>
                             <div className="w-1/6 flex items-center justify-center text-gray-400 text-sm">
-                                <Icon icon="icon-park-outline:like" className="text-xl"/>
+                                <Icon icon="icon-park-outline:like" className="text-xl cursor-pointer"/>
                             </div>
                             <div className="w-1/6 flex items-center justify-center text-gray-400 text-sm">
                                 <div className="duration">{songDuartion ? formatTime(songDuartion.duration()) : 'Loading...'}</div>
