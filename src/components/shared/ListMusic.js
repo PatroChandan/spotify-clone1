@@ -25,15 +25,26 @@ const ListMusic = ({key}) =>{
 
     useEffect(()=>{
         const getData = async () =>{
-            const response = await makeAuthenticatedGETRequest("/music/album");
+            const response = await makeAuthenticatedGETRequest("/music/song");
             // console.log("chandan",response);
-            let newArray = response.data.filter((el)=>id===el._id)
+            let newArray = response.data.filter((el)=>id===el.title)
            
 
             setSongData(newArray);
         };
         getData();
     },[]);
+    // useEffect(()=>{
+    //     const getData = async () =>{
+    //         const response = await makeAuthenticatedGETRequest("/music/song");
+    //         // console.log("chandan",response);
+    //         let newArray = response.data.filter((el)=>id===el._id)
+           
+
+    //         setSongData(newArray);
+    //     };
+    //     getData();
+    // },[]);
     console.log("mad",songData);
 
     useEffect(() => {
@@ -73,7 +84,7 @@ const ListMusic = ({key}) =>{
             </div>
             <div className="space-y-3 overflow-auto">
             
-                {songData[0]?.songs?.map((item)=>{
+                {songData?.map((item)=>{
                     return(<div className="flex hover:bg-gray-400 hover:bg-opacity-20 p-2 rounded-sm" onClick={()=>{handleSongSelection(item)}}>
                         <div className="w-12 h-12 bg-cover bg-center" >
                             <img src={item.thumbnail}/>
@@ -87,7 +98,7 @@ const ListMusic = ({key}) =>{
                                 <Icon icon="icon-park-outline:like" className="text-xl cursor-pointer"/>
                             </div>
                             <div className="w-1/6 flex items-center justify-center text-gray-400 text-sm">
-                                <div className="duration">{songDuartion ? formatTime(songDuartion.duration()) : 'Loading...'}</div>
+                                <div className="duration">{songDuartion ? formatTime(songDuartion.duration()) : '00:00'}</div>
                             </div>
                         </div>
                     </div>)

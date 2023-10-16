@@ -135,22 +135,24 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
             setIsPaused(true);
         }
     }
-    const handleNext = () => {
+    const handleNext = (currentSong) => {
         
-        const currentIndex = currentSongIndex;
-        const nextIndex = (currentIndex + 1) % arrayLength.length; 
-        const nextSong = arrayLength[nextIndex];
+        // const currentIndex = currentSongIndex;
+        // const nextIndex = (currentIndex + 1) % arrayLength.length; 
+        // const nextSong = arrayLength[nextIndex];
     
-        setCurrentSong(nextSong);
+        // setCurrentSong(nextSong);
+        setCurrentSong(currentSong+1);
     };
     
-    const handlePrevious = () => {
+    const handlePrevious = (currentSong) => {
     
-    const currentIndex = currentSongIndex;
-    const previousIndex = (currentIndex - 1 + arrayLength.length) % arrayLength.length; 
-    const previousSong = arrayLength[previousIndex];
+        // const currentIndex = currentSongIndex;
+        // const previousIndex = (currentIndex - 1 + arrayLength.length) % arrayLength.length; 
+        // const previousSong = arrayLength[previousIndex];
 
-    setCurrentSong(previousSong);
+        // setCurrentSong(previousSong);
+        setCurrentSong(currentSong-1);
     };
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
@@ -177,8 +179,8 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
     const logOut = () =>{
         try {
             console.log("Logging out...");
-            removeCookie(['token']);
-            // localStorage.removeItem("token");
+            // removeCookie(['token']);
+            localStorage.removeItem("token");
             // cookies.remove("token");
             navigate("/login");
         } catch (error) {
@@ -202,15 +204,7 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
         setIsDropdownOpen(false);
     };
 
-//   const logOut = () => {
-//     // Add logic for logging out, e.g., removing cookies
-//     // removeCookie(['token']);
-//     localStorage.removeItem("token");
-//     // Additional logout logic can be added here
-//     // ...
-//     closeDropdown(); // Close the dropdown after logging out
-//   };
-    // profile drop down end
+//   
   
 
   return (
@@ -224,9 +218,9 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                     <img src={spotify_logo} alt="spotify logo" width={125}/>
                 </div>
                 <div className="py-2">
-                    <IconText iconName={"material-symbols:home"} displayText={"Home"} targetLink={"/home"} active={currActiveScrn === "home"}/>
+                    <IconText iconName={"material-symbols:home"} displayText={"Home"} targetLink={"/"} active={currActiveScrn === "home"}/>
                     <IconText iconName={"majesticons:search-line"} displayText={"Search"} targetLink={"/searchpage"} active={currActiveScrn === "search"}/>
-                    <IconText iconName={"fluent:library-28-regular"} displayText={"Library"} active={currActiveScrn === "library"}/>
+                    <IconText iconName={"fluent:library-28-regular"} displayText={"Library"} targetLink={"/library"} active={currActiveScrn === "library"}/>
                     <IconText iconName={"mdi:music-box-multiple"} displayText={"My Music"} targetLink={"/mymusic"} active={currActiveScrn === "mymusic"}/>
                 </div>
                 <div className="pt-5">
@@ -265,8 +259,8 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                     {/* <SearchPage/> */}
                     <div className="w-1/3 flex h-full">
                         <div className="w-3/5 flex justify-around items-center">
-                            <TextWithHover displayText={"Premium"}/>
-                            <TextWithHover displayText={"Support"}/>
+                            {/* <TextWithHover displayText={"Premium"}/>
+                            <TextWithHover displayText={"Support"}/> */}
                             {/* <div className="h-1/2 border-r border-white"></div> */}
                         </div>
                         <div className="w-2/5 flex justify-around h-full items-center">
@@ -294,7 +288,9 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
 
                                         <div
                                             className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md"
-                                            onClick={logOut}
+                                            onClick={()=>{
+                                                console.log("chandan");
+                                                logOut()}}
                                         >
                                             Sign out
                                         </div>
@@ -308,8 +304,8 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                 :<div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-end">
                     <div className="w-1/3 flex h-full">
                         <div className="w-3/5 flex justify-around items-center">
-                            <TextWithHover displayText={"Premium"}/>
-                            <TextWithHover displayText={"Support"}/>
+                            {/* <TextWithHover displayText={"Premium"}/>
+                            <TextWithHover displayText={"Support"}/> */}
                             {/* <div className="h-1/2 border-r border-white"></div> */}
                         </div>
                         <div className="w-2/5 flex justify-around h-full items-center relative">
@@ -337,9 +333,9 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
 
                                         <div
                                             className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md"
-                                            onClick={logOut}
+                                            onMouseEnter={()=>{console.log("chandan");logOut()}}
                                         >
-                                            Sign out
+                                            Sign out1
                                         </div>
                                     </div>
                                 )}
@@ -408,11 +404,11 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                 <div className="flex w-1/3 justify-between items-center">
                     {/* song control */}
                     <Icon icon="ph:shuffle-light" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white"/>
-                    <Icon icon="ic:baseline-skip-previous" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white" onClick={handlePrevious}/>
+                    <Icon icon="ic:baseline-skip-previous" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white" onClick={()=>handlePrevious(currentSong)}/>
                     <Icon icon={isPaused?"ic:baseline-play-circle":"ic:baseline-pause-circle"} fontSize={40} className="cursor-pointer text-gray-500 hover:text-white"
                         onClick={togglePlayPause}
                     />
-                    <Icon icon="ic:baseline-skip-next" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white" onClick={handleNext}/>
+                    <Icon icon="ic:baseline-skip-next" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white" onClick={()=>handleNext(currentSong)}/>
                     <Icon icon="ph:repeat-light" fontSize={30} className="cursor-pointer text-gray-500 hover:text-white"/>
                 </div>
                 {/* <div>progress bar</div> */}

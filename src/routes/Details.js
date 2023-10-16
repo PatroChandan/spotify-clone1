@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
 import LoggedInContainer from "../containers/LoggedInContainer"
 import { makeAuthenticatedGETRequest } from "../utils/serverHelpers"
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 
 const LoggedInHome = () =>{
     const [albumData,setAlbumData] = useState([]);
+    const location = useLocation();
     // const {albumData}= useParams();
 
-    useEffect(()=>{
-        const getData = async () =>{
-            const response = await makeAuthenticatedGETRequest("/music/album");
-            // console.log("chandan",response);
-            setAlbumData(response.data);
-        };
-        getData();
-    },[]);
+    // useEffect(()=>{
+    //     const getData = async () =>{
+    //         const response = await makeAuthenticatedGETRequest("/music/album");
+    //         // console.log("chandan",response);
+    //         setAlbumData(response.data);
+    //     };
+    //     getData();
+    // },[]);
+    console.log(location.state.name);
     return(
         // <LoggedInContainer cardsData={albumData}/>
         <LoggedInContainer currActiveScrn={"home"}>
             {/* <PlaylistView titleText={"Top this week"} cardsData={albumData}/> */}
-            <PlaylistView titleText={"Top this week"} cardsData={albumData}/>
+            <PlaylistView titleText={location.state.titleText} cardsData={location.state.name}/>
+            
         </LoggedInContainer>
             
         
@@ -43,8 +46,8 @@ export const PlaylistView = ({titleText,cardsData}) =>{
                         <Card
                             keyId={item._id}
                             title={item.title} 
-                            name={item.artists[0].name} 
-                            imgUrl={item.image}
+                            name={titleText==="Top this week"?item.artists[0].name : item.artist[0].name}  
+                            imgUrl={titleText==="Top this week"?item.image:item.thumbnail}
                         />
                     )
                 })

@@ -12,6 +12,8 @@ import songContext from './contexts/songContext';
 import { useState } from 'react';
 import SearchPage from './routes/SearchPage';
 import ListMusic from './components/shared/ListMusic';
+import Library from './routes/Library';
+
 
 function App() {
   const [currentSong,setCurrentSong] = useState(null);
@@ -23,17 +25,18 @@ function App() {
     <div className="w-screen h-screen font-poppins">
       <BrowserRouter>
         {
-          cookie.token ? (
+          localStorage.token ? (
             //logged in routes
             <songContext.Provider value={{currentSong,setCurrentSong,songPlayed,setSongPlayed,isPaused,setIsPaused}}>
               <Routes>
-                  <Route path='/' />
-                  <Route path='/home' element={<LoggedInHome/>}/>
+                  
+                  <Route path='/' element={<LoggedInHome/>}/>
                   <Route path='/myMusic' element={<MyMusic/>}/>
                   <Route path='/details' element={<Details/>}/>
                   <Route path='/searchpage' element={<SearchPage/>}/>
                   <Route path='/listmusic/:id' element={<ListMusic/>}/>
-                  <Route path='*' element={<Navigate to={'/home'}/>}/>
+                  <Route path='/library' element={<Library/>}/>
+                  <Route path='*' element={<Navigate to={'/'}/>}/>
               </Routes>
             </songContext.Provider>
 

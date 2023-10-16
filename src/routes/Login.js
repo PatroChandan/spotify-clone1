@@ -31,14 +31,14 @@ const LoginComponent = () =>{
         })
         
         response = await response.json();
-        if(response){
+        if(response && response.token){
             const token = response.token;
             localStorage.setItem('token', token);
             const date = new Date();
             date.setDate(date.getDate() + 30);
-            setCookie("token",token,{path:"/",expires:date});
+            // setCookie("token",token,{path:"/",expires:date});
             alert("Success");
-            navigate("/home")
+            navigate("/")
         }else{
             alert("Failure");
         }
