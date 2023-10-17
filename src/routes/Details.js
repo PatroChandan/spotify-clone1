@@ -41,26 +41,43 @@ export const PlaylistView = ({titleText,cardsData}) =>{
         <div className="text-2xl font-semibold mb-5">{titleText}</div>
         <div className="w-full flex justify-between gap-6 overflow-auto flex-wrap">
             {
-                cardsData?.map((item)=>{
+                titleText ==="Top album"?(
+                    cardsData?.map((item)=>{
+                    console.log(item)
                     return (
                         <Card
                             keyId={item._id}
-                            title={item.title} 
-                            name={titleText==="Top this week"?item.artists[0].name : item.artist[0].name}  
-                            imgUrl={titleText==="Top this week"?item.image:item.thumbnail}
+                            title={item.title}
+                            // name={titleText==="Top this week"?item.artists[0].name : item.artist[0].name}  
+                            mood={titleText==="Top album"?item.mood : item.mood}  
+                            imgUrl={titleText==="Top album"?item.image:item.thumbnail}
+                            titleText={titleText}
                         />
                     )
-                })
+                })  
+                ):(cardsData?.map((item)=>{
+                    console.log(item)
+                    return (
+                        <Card
+                            keyId={item._id}
+                            title={item.title}
+                            // name={titleText==="Top this week"?item.artists[0].name : item.artist[0].name}  
+                            mood={titleText==="Top this week"?item.mood : item.mood}  
+                            imgUrl={titleText==="Top this week"?item.image:item.thumbnail}
+                            titleText={titleText}
+                        />
+                    )
+                }))
             }
         </div>
     </div>
     )
 };
 
-const Card = ({keyId,title,name,imgUrl}) =>{
+const Card = ({keyId,title,mood,imgUrl,titleText}) =>{
     const navigate = useNavigate();
     const handleListOfMusic = () =>{
-        navigate(`/listmusic/${keyId}`);
+        navigate(`/listmusic/${keyId}`,{state:{mood:mood,title:titleText}});
     }
     return(
         <div className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg" style={{maxHeight:500, minWidth:200}} key={keyId} onClick={()=>handleListOfMusic()}>
@@ -70,7 +87,7 @@ const Card = ({keyId,title,name,imgUrl}) =>{
                  alt="label"/>
             </div>
             <div className="text-white text-sm font-semi-bold py-3 " >{title}</div>
-            <div className="text-gray-500 text-sm">{name}</div>
+            <div className="text-gray-500 text-sm">{mood}</div>
         </div>
     )
 }

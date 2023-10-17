@@ -15,15 +15,15 @@ const LoggedInHome = () =>{
     const [sadData,setSadData] = useState([]);
     
 
-    // useEffect(()=>{
-    //     const getData = async () =>{
-    //         const response = await makeAuthenticatedGETRequest("/music/album");
+    useEffect(()=>{
+        const getData = async () =>{
+            const response = await makeAuthenticatedGETRequest("/music/album");
             
-    //         setAlbumData(response.data);
+            setAlbumData(response.data);
             
-    //     };
-    //     getData();
-    // },[]);
+        };
+        getData();
+    },[]);
     useEffect(()=>{
         const getData = async () =>{
             const response = await makeAuthenticatedGETRequest(`/music/song?filter={"featured":"Trending songs"}`);
@@ -74,7 +74,7 @@ const LoggedInHome = () =>{
     return(
         // <LoggedInContainer currActiveScrn={"home"} cardsData={albumData} limit={albumData.length}/>
         <LoggedInContainer currActiveScrn={"home"}>
-            {/* <PlaylistView titleText={"Top this week"} cardsData={albumData}/> */}
+            <PlaylistView titleText={"Top album"} cardsData={albumData}/>
             <PlaylistView titleText={"Trending songs"} cardsData={featuredData}/>
             <PlaylistView titleText={"Romantic"} cardsData={romaticData}/>
             <PlaylistView titleText={"Excited"} cardsData={excitedData}/>
@@ -110,18 +110,35 @@ export const PlaylistView = ({titleText,cardsData}) =>{
         <div className="w-full flex justify-between gap-4 flex-wrap">
             {
                
-                cardsData.slice(0,4)?.map((item)=>{
-                    console.log(item)
+               titleText ==="Top album"?(
+                cardsData && cardsData.slice(0,4)?.map((item,index)=>{
+                    console.log("item 1",item)
                     return (
                         <Card
                             keyId={item._id}
                             title={item.title}
                             // name={titleText==="Top this week"?item.artists[0].name : item.artist[0].name}  
-                            mood={titleText==="Top this week"?item.mood : item.mood}  
-                            imgUrl={titleText==="Top this week"?item.image:item.thumbnail}
+                            mood={titleText==="Top album"?item.mood : item.mood}  
+                            imgUrl={titleText==="Top album"?item.image:item.thumbnail}
+                            titleText={titleText}
+                            idx={index}
                         />
                     )
-                })
+                })  
+                ):(cardsData && cardsData.slice(0,4)?.map((item,index)=>{
+                    console.log("item 2",item)
+                    return (
+                        <Card
+                            keyId={item._id}
+                            title={item.title}
+                            // name={titleText==="Top this week"?item.artists[0].name : item.artist[0].name}  
+                            mood={titleText==="Trending songs"?item.featured : item.mood}  
+                            imgUrl={titleText==="Top this week"?item.image:item.thumbnail}
+                            titleText={titleText}
+                            idx={index}
+                        />
+                    )
+                }))
                 
             }
         </div>
@@ -130,14 +147,14 @@ export const PlaylistView = ({titleText,cardsData}) =>{
 };
 
 
-const Card = ({keyId,title,mood,imgUrl}) =>{
+const Card = ({keyId,title,mood,imgUrl,titleText,idx}) =>{
     const navigate = useNavigate();
     const handleListOfMusic = () =>{
         // const propsToPass = {
         //    console.log("gfcgc",keyId);
         //    prop1: key
         // };
-        navigate(`/listmusic/${keyId}`);
+        navigate(`/listmusic/${keyId}`,{state:{mood:mood,title:titleText,index:idx}});
         
     }
     return(

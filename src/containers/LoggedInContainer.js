@@ -26,14 +26,37 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
     const [progress, setProgress] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [songDuration, setSongDuration] = useState(0);
-    const [currentSongIndex, setCurrentSongIndex] = useState(null);
-    const [arrayLength, setArrayLength] = useState(0);
+    const [currentSongIndex, setCurrentSongIndex] = useState(0);
+    const [musicData, setMusicData] = useState([]);
+    const {currentSong,setCurrentSong,songPlayed,setSongPlayed,isPaused,setIsPaused} = useContext(songContext);
 
-  // Callback function to set the current song's index
-    const handleCurrentSongIndexChange = (index, length) => {
-        setCurrentSongIndex(index);
-        setArrayLength(length);
-    };
+  
+
+    useEffect(()=>{
+        const getData = async () =>{
+            const response = await makeAuthenticatedGETRequest("/music/song");
+            setMusicData(response.data);
+            const initialSongId = currentSong?._id
+            const initialIndex = musicData?.findIndex(song => song._id === initialSongId);
+           
+
+            setCurrentSongIndex(initialIndex);
+            console.log("song index",currentSongIndex);
+        };
+        getData();
+    },[currentSong]);
+    useEffect(()=>{
+        const getData = async () =>{
+            const response = await makeAuthenticatedGETRequest("/music/album");
+            setMusicData(response.data);
+            const initialSongId = currentSong?._id;
+            const initialIndex = musicData?.songs?.findIndex(song => song._id === initialSongId);
+           
+
+            setCurrentSongIndex(initialIndex);
+        };
+        getData();
+    },[currentSong]);
 
     const searchSong = async () => {
         // This function will call the search api
@@ -44,7 +67,7 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
     };
     
     
-    const {currentSong,setCurrentSong,songPlayed,setSongPlayed,isPaused,setIsPaused} = useContext(songContext);
+    
     // console.log("ganesh",currentSong);
 
     const firstUpdate = useRef(true);
@@ -104,11 +127,12 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
             onend: () => {
                 
                 setCurrentTime(0);
+                setIsPaused(true);
             },
             onplay: () => {
                 
-                setSongDuration(sound.duration());
-                setCurrentTime(songPlayed.seek());
+                setSongDuration(songPlayed?.duration());
+                setCurrentTime(songPlayed?.seek());
                 
                 updateProgress();
             },
@@ -135,17 +159,27 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
             setIsPaused(true);
         }
     }
-    const handleNext = (currentSong) => {
+    const handleNext = () => {
+        if (currentSongIndex !== null) {
+            const nextIndex = (currentSongIndex + 1) % songData.length;
+            setCurrentSongIndex(nextIndex);
+            setCurrentSong(songData[nextIndex]);
+          }
         
         // const currentIndex = currentSongIndex;
         // const nextIndex = (currentIndex + 1) % arrayLength.length; 
         // const nextSong = arrayLength[nextIndex];
     
         // setCurrentSong(nextSong);
-        setCurrentSong(currentSong+1);
+        // setCurrentSong(currentSong+1);
     };
     
-    const handlePrevious = (currentSong) => {
+    const handlePrevious = () => {
+        if (currentSongIndex !== null) {
+            const previousIndex = (currentSongIndex - 1 + songData.length) % songData.length;
+            setCurrentSongIndex(previousIndex);
+            setCurrentSong(songData[previousIndex]);
+          }
     
         // const currentIndex = currentSongIndex;
         // const previousIndex = (currentIndex - 1 + arrayLength.length) % arrayLength.length; 
@@ -335,7 +369,7 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                                             className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md"
                                             onMouseEnter={()=>{console.log("chandan");logOut()}}
                                         >
-                                            Sign out1
+                                            Sign out
                                         </div>
                                     </div>
                                 )}
@@ -366,7 +400,7 @@ const LoggedInContainer = ({children,currActiveScrn,cardsData,limit}) => {
                             Showing search results for
                             <span className="font-bold"> {searchText}</span>
                         </div>
-                        {songData.map((item) => {
+                        {songData?.map((item) => {
                             return (
                                 <SingleSongCard
                                     info={item}
