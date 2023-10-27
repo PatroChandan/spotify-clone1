@@ -79,91 +79,6 @@ const Player = () => {
     playAnimationRef.current = requestAnimationFrame(repeat);
   }, [isPlaying, audioRef, repeat]);
 
-  //   end
-
-  // const firstUpdate = useRef(true);
-  // const animationRef = useRef();
-
-  // const updateProgress = () => {
-  //   if (
-  //     currentSongs[activeSong] &&
-  //     typeof currentSongs[activeSong].seek === "function"
-  //   ) {
-  //     const currentTime = currentSongs[activeSong]?.seek();
-  //     if (currentTime !== null) {
-  //       setCurrentTime(currentTime);
-  //       setProgress((currentTime / songDuration) * 100);
-  //     }
-  //   }
-
-  //   animationRef.current = requestAnimationFrame(updateProgress);
-  // };
-
-  // useEffect(() => {
-  //   animationRef.current = requestAnimationFrame(updateProgress);
-
-  //   return () => cancelAnimationFrame(animationRef.current);
-  // }, [currentSongs[activeSong]]);
-
-  // useLayoutEffect(() => {
-  //   if (firstUpdate.current) {
-  //     firstUpdate.current = false;
-  //     return;
-  //   }
-  //   if (!currentSongs[activeSong]) {
-  //     return;
-  //   }
-  //   // console.log("me");
-  //   changeSong(currentSongs?.[activeSong]?.audio_url);
-  // }, []);
-
-  // const playSound = () => {
-  //   if (!currentSongs[activeSong]) {
-  //     return;
-  //   }
-  //   currentSongs?.[activeSong].play();
-  // };
-
-  // const changeSong = (songSrc) => {
-  //   if (currentSongs[activeSong]) {
-  //     currentSongs?.[activeSong].stop();
-  //   }
-  //   let sound = new Howl({
-  //     src: [songSrc],
-  //     html5: true,
-  //     onend: () => {
-  //       setCurrentTime(0);
-  //       setIsPaused(true);
-  //     },
-  //     onplay: () => {
-  //       setSongDuration(currentSongs[activeSong]?.duration());
-  //       setCurrentTime(currentSongs[activeSong]?.seek());
-
-  //       updateProgress();
-  //     },
-  //   });
-  //   setActiveSong(sound);
-  //   sound.play();
-  //   setIsPaused(false);
-  // };
-
-  // const pauseSound = () => {
-  //   if (currentSongs[activeSong]) {
-  //     currentSongs[activeSong].pause();
-  //     setIsPaused(true);
-  //   }
-  // };
-
-  // const togglePlayPause = () => {
-  //   if (isPaused) {
-  //     playSound();
-  //     setIsPaused(false);
-  //   } else {
-  //     pauseSound();
-  //     setIsPaused(true);
-  //   }
-  // };
-
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
@@ -174,11 +89,6 @@ const Player = () => {
   };
 
   const handleSeek = (e) => {
-    // if (songPlayed) {
-    //   const seekTime = (e.target.value / 100) * songPlayed.duration();
-    //   songPlayed.seek(seekTime);
-    //   setCurrentTime(seekTime);
-    // }
     audioRef.current.currentTime = progressBarRef.current.value;
   };
 
@@ -245,14 +155,7 @@ const Player = () => {
             className="cursor-pointer text-gray-500 hover:text-white"
             onClick={() => handlePrevious(currentSongs?.[activeSong])}
           />
-          {/* <Icon
-            icon={
-              isPaused ? "ic:baseline-play-circle" : "ic:baseline-pause-circle"
-            }
-            fontSize={40}
-            className="cursor-pointer text-gray-500 hover:text-white"
-            onClick={togglePlayPause}
-          /> */}
+
           <Icon
             icon={
               isPlaying ? "ic:baseline-pause-circle" : "ic:baseline-play-circle"
