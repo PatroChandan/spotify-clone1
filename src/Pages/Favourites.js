@@ -1,18 +1,17 @@
-import { useEffect, useState, useContext, useRef } from "react";
-import LoggedInContainer from "../../containers/LoggedInContainer";
+import { useEffect, useState, useContext } from "react";
+import LoggedInContainer from "../containers/LoggedInContainer";
 import {
   addSongToFavorites,
-  makeAuthenticatedGETRequest,
   removeSongFromFavorites,
-} from "../../utils/serverHelpers";
+} from "../utils/serverHelpers";
 import { useLocation, useParams } from "react-router-dom";
-import songContext, { useSongContext } from "../../contexts/songContext";
 
 import { Icon } from "@iconify/react";
 import { Howl, Howler } from "howler";
-import useApi from "../../Hooks/useApi";
+import useApi from "../Hooks/useApi";
+import { useSongContext } from "../contexts/songContext";
 
-const ListMusic = () => {
+const Favorites = () => {
   const { currentSongs, setCurrentSongs, activeSong, setActiveSong } =
     useSongContext();
   //   const [currentSongs, setcurrentSongs] = useState([]);
@@ -25,52 +24,15 @@ const ListMusic = () => {
   // console.log("chandan",id);
 
   const { data: favoritesData } = useApi("/music/favorites/like");
-  const audioRef = useRef();
-  const [duration, setDuration] = useState(null);
+  console.log("fav song", favoritesData);
 
   useEffect(() => {
-    const getData = async () => {
-      if (location.state.title === "Top album") {
-        const response = await makeAuthenticatedGETRequest(
-          "/music/album?limit=1000"
-        );
-        let newArray = response?.data?.filter((el) => id === el._id);
-        console.log("new array", newArray);
-        setCurrentSongs(newArray[0]?.songs);
-      } else {
-        const response = await makeAuthenticatedGETRequest(
-          "/music/song?limit=1000"
-        );
-        let newArray = response?.data?.filter((el) => id === el._id);
-        console.log("new array2", newArray);
-        setCurrentSongs(newArray);
-      }
-    };
-    getData();
-  }, []);
-
-  useEffect(() => {
-    // Load liked songs from local storage on component mount
-    const storedLikedSongs = localStorage.getItem("likedSongs");
-    if (storedLikedSongs) {
-      setLikedSongs(JSON.parse(storedLikedSongs));
-    }
-  }, []);
-
-  useEffect(() => {
-    // Save liked songs to local storage whenever it changes
-    localStorage.setItem("likedSongs", JSON.stringify(likedSongs));
-  }, [likedSongs]);
-
-  useEffect(() => {
-    // Create the Howl instance when the component mounts
     if (currentSongs.length > 0 && Array.isArray(currentSongs[0]?.songs)) {
       const sound = new Howl({
         src: [currentSongs[activeSong]?.audio_url],
         html5: true,
         onend: () => {
           if (activeSong < currentSongs.length - 1) {
-            // const nextSong = currentSongs[0]?.songs[activeSong];
             setActiveSong((prev) => prev + 1);
 
             sound.stop();
@@ -96,7 +58,6 @@ const ListMusic = () => {
       remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
     return `${formattedMinutes}:${formattedSeconds}`;
   };
-
   const handleLikeToggle = async (songId) => {
     try {
       if (likedSongs.includes(songId)) {
@@ -117,23 +78,18 @@ const ListMusic = () => {
     }
   };
 
-  const onLoadedMetadata = () => {
-    const seconds = audioRef.current.duration;
-    setDuration(seconds);
-  };
-
   const handleSongSelection = (index, songs) => {
     setCurrentSongs(songs);
     setActiveSong(index);
   };
-  console.log("list song", currentSongs);
+  //   console.log("list song", currentSongs);
   return (
-    <LoggedInContainer>
+    <LoggedInContainer currActiveScrn={"favourites"}>
       <div className="text-white text-xl font-semibold pb-4 pl-2 pt-8">
-        {location.state.title}
+        Favourites
       </div>
       <div className="space-y-3 overflow-auto">
-        {currentSongs?.map((item, index, songs) => {
+        {favoritesData.songs?.map((item, index, songs) => {
           let cnt = index;
           return (
             <div
@@ -143,11 +99,6 @@ const ListMusic = () => {
               }}
               key={index}
             >
-              <audio
-                src={currentSongs[activeSong]?.audio_url}
-                ref={audioRef}
-                onLoadedMetadata={onloadedmetadata}
-              />
               <div className="w-5 text-gray-400 flex items-center justify-center pr-2">
                 {cnt + 1}
               </div>
@@ -165,11 +116,7 @@ const ListMusic = () => {
                 </div>
                 <div className="w-1/6 flex items-center justify-center text-gray-400 text-sm">
                   <Icon
-                    icon={
-                      likedSongs.includes(item._id)
-                        ? "flat-color-icons:like"
-                        : "icon-park-outline:like"
-                    }
+                    icon={"flat-color-icons:like"}
                     className={`text-xl cursor-pointer ${
                       likedSongs.includes(item._id)
                         ? "text-red-500"
@@ -190,8 +137,7 @@ const ListMusic = () => {
           );
         })}
       </div>
-      {/* Hello */}
     </LoggedInContainer>
   );
 };
-export default ListMusic;
+export default Favorites;

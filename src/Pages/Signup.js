@@ -5,9 +5,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { makeUnauthenticatedPOSTRequest } from '../utils/serverHelpers';
 import { useCookies } from 'react-cookie';
+import { useAuthContext } from '../contexts/AuthContext';
 
 
 const SignupComponent = () =>{
+    const {setToken,setUser,setAuthenticated} = useAuthContext();
     
     const [username,setUsername] = useState("");
     const [email,setEmail] = useState("");
@@ -17,15 +19,19 @@ const SignupComponent = () =>{
 
     const signUp = async () =>{
         // const data = {username,email,password};
+        
         const response = await makeUnauthenticatedPOSTRequest("/user/signup",username,email,password);
         if(response){
             console.log(response.data);
             const token = response.token;
-            const date = new Date();
-            date.setDate(date.getDate() + 30);
-            setCookie("token",token,{path:"/",expires:date});
+            setToken(token);
+            setUser(response.data);
+            setAuthenticated(true);
+            
+            localStorage.setItem("spotify_user",JSON.stringify(response.data));
+            localStorage.setItem('spotify_token', token);
             alert("Success");
-            navigate("/home")
+            navigate("/")
         }else{
             alert("Failure");
         }
