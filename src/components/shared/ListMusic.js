@@ -32,14 +32,14 @@ const ListMusic = () => {
     const getData = async () => {
       if (location.state.title === "Top album") {
         const response = await makeAuthenticatedGETRequest(
-          "/music/album?limit=1000"
+          "/music/album?limit=100"
         );
         let newArray = response?.data?.filter((el) => id === el._id);
         console.log("new array", newArray);
         setCurrentSongs(newArray[0]?.songs);
       } else {
         const response = await makeAuthenticatedGETRequest(
-          "/music/song?limit=1000"
+          "/music/song?limit=100"
         );
         let newArray = response?.data?.filter((el) => id === el._id);
         console.log("new array2", newArray);

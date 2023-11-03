@@ -16,8 +16,6 @@ const Player = () => {
   const [songData, setSongData] = useState([]);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  // const [songDuration, setSongDuration] = useState(0);
-  // const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [musicData, setMusicData] = useState([]);
   const {
     currentSongs,
