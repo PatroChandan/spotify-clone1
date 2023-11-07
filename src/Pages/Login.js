@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { backendUrl } from "../utils/config";
 import { useAuthContext } from "../contexts/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginComponent = () => {
   const { setToken, setUser, setAuthenticated } = useAuthContext();
@@ -38,12 +40,16 @@ const LoginComponent = () => {
       localStorage.setItem("spotify_user", JSON.stringify(response.data));
       localStorage.setItem("spotify_token", token);
 
-      alert("Success");
+      toast.success(response.status, {
+        position: toast.POSITION.TOP_CENTER,
+      });
       navigate("/");
     } else {
       setAuthenticated(false);
 
-      alert("Failure");
+      toast.error(response.message, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     }
   };
 
@@ -89,6 +95,7 @@ const LoginComponent = () => {
           <Link to={"/signup"}>SIGN UP FOR SPOTIFY</Link>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

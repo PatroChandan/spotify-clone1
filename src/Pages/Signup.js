@@ -4,7 +4,6 @@ import PasswordInput from "../components/shared/PasswordInput";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { makeUnauthenticatedPOSTRequest } from "../utils/serverHelpers";
-import { useCookies } from "react-cookie";
 import { useAuthContext } from "../contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,8 +18,6 @@ const SignupComponent = () => {
   const navigate = useNavigate();
 
   const signUp = async () => {
-    // const data = {username,email,password};
-
     const response = await makeUnauthenticatedPOSTRequest(
       "/user/signup",
       username,
@@ -28,7 +25,7 @@ const SignupComponent = () => {
       password
     );
     if (response.ok) {
-      console.log(response.data);
+      console.log("sign up data", response.data);
       const token = response.token;
       setToken(token);
       setUser(response.data);
@@ -36,7 +33,7 @@ const SignupComponent = () => {
 
       localStorage.setItem("spotify_user", JSON.stringify(response.data));
       localStorage.setItem("spotify_token", token);
-      toast.success("User registered successfully!", {
+      toast.success(response.status, {
         position: toast.POSITION.TOP_CENTER,
       });
       navigate("/");
