@@ -80,6 +80,10 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
     setIsDropdownOpen(false);
   };
 
+  const handleProfile = () => {
+    navigate("/profile");
+  };
+
   //
 
   return (
@@ -115,7 +119,7 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
             <div className="pt-5">
               <IconText
                 iconName={"zondicons:heart"}
-                displayText={"Favourites"}
+                displayText={"Liked Songs"}
                 targetLink={"/favorites"}
                 active={currActiveScrn === "favourites"}
               />
@@ -166,25 +170,41 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
                             </div> */}
                   <div className="relative">
                     <div
-                      className="cursor-pointer bg-gray-200 rounded-full"
+                      className="cursor-pointer bg-gray-500 rounded-full"
                       onClick={toggleDropdown}
                       onBlur={closeDropdown}
                       tabIndex={0}
                     >
                       {/* The icon or profile image that triggers the dropdown */}
-                      <Icon icon="gg:profile" className="w-7 h-7" />
+                      <Icon
+                        icon="gg:profile"
+                        className="w-7 h-7 bg-gray-500 "
+                      />
                     </div>
 
                     {isDropdownOpen && (
-                      <div className="absolute top-10 right-0 bg-white p-4 shadow-md rounded-md">
+                      <div className="absolute top-10 right-0 bg-black p-4 shadow-md rounded-md">
                         {/* Dropdown content, e.g., user options */}
                         {/* <DropDown /> */}
-                        {/* <button className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md">
-                          Premium
-                        </button> */}
+                        <button className="cursor-pointer text-gray-500 hover:bg-gray-300 p-2 rounded-md">
+                          <a
+                            href="https://www.spotify.com/in-en/premium/"
+                            target="_blank"
+                          >
+                            Premium
+                          </a>
+                        </button>
+                        <button
+                          className="cursor-pointer text-gray-500 hover:bg-gray-300 p-2 rounded-md"
+                          onClick={() => {
+                            handleProfile();
+                          }}
+                        >
+                          Profile
+                        </button>
 
                         <button
-                          className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md"
+                          className="cursor-pointer text-gray-500 hover:bg-gray-300 p-2 rounded-md"
                           onClick={() => {
                             logOut();
                           }}
@@ -222,15 +242,22 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
                     </div>
 
                     {isDropdownOpen && (
-                      <div className="absolute top-10 right-0 bg-white p-4 shadow-md rounded-md">
+                      <div className="absolute top-10 right-0 bg-black p-4 shadow-md rounded-md p-2">
                         {/* Dropdown content, e.g., user options */}
                         {/* <DropDown /> */}
-                        {/* <div className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md">
+                        <div className="cursor-pointer text-gray-500 hover:bg-gray-300 p-2 rounded-md w-full">
                           Premium
-                        </div> */}
-
+                        </div>
                         <button
-                          className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md"
+                          className="cursor-pointer text-gray-500 hover:bg-gray-300 p-2 rounded-md w-full"
+                          onClick={() => {
+                            handleProfile();
+                          }}
+                        >
+                          <Link to={"/profile"}>Profile</Link>
+                        </button>
+                        <button
+                          className="cursor-pointer text-gray-500 hover:bg-gray-300 p-2 rounded-md w-full"
                           onMouseEnter={() => {
                             console.log("chandan");
                             logOut();

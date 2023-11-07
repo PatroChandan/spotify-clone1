@@ -24,7 +24,8 @@ const SignupComponent = () => {
       email,
       password
     );
-    if (response.ok) {
+    console.log("sign up response", response.data);
+    if (response.status === "success") {
       console.log("sign up data", response.data);
       const token = response.token;
       setToken(token);

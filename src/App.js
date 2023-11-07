@@ -13,6 +13,7 @@ import ListMusic from "./components/shared/ListMusic";
 import Library from "./Pages/Library";
 import { useAuthContext } from "./contexts/AuthContext";
 import Favorites from "./Pages/Favourites";
+import Profile from "./Pages/Profile";
 
 function App() {
   const { authenticated, setAuthenticated, setUser, setToken } =
@@ -39,6 +40,7 @@ function App() {
             <Route path="/listmusic/:id" element={<ListMusic />} />
             <Route path="/library" element={<Library />} />
             <Route path="/favorites" element={<Favorites />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<Navigate to={"/"} />} />
           </Routes>
         ) : (

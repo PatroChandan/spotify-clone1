@@ -11,6 +11,7 @@ import { Howl, Howler } from "howler";
 import { useSongContext } from "../contexts/songContext";
 import { makeAuthenticatedGETRequest } from "../utils/serverHelpers";
 import { useAuthContext } from "../contexts/AuthContext";
+import spotifyImg from "../assets/images/spotify.webp";
 
 const Player = () => {
   const [songData, setSongData] = useState([]);
@@ -128,7 +129,11 @@ const Player = () => {
       />
       <div className="w-1/4 flex items-center">
         <img
-          src={currentSongs?.[activeSong]?.thumbnail}
+          src={
+            currentSongs?.[activeSong]?.thumbnail
+              ? currentSongs?.[activeSong]?.thumbnail
+              : spotifyImg
+          }
           alt="currentSongThumbnail"
           className="h-14 w-14 rounded"
         />
