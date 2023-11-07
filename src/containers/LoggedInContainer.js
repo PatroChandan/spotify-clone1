@@ -32,7 +32,6 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [songDuration, setSongDuration] = useState(0);
-  // const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [musicData, setMusicData] = useState([]);
   const {
     currentSongs,
@@ -54,142 +53,6 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
     setSongData(response.data);
   };
 
-  // console.log("ganesh",currentSong);
-
-  // const firstUpdate = useRef(true);
-  // const animationRef = useRef();
-
-  // const playlist = songData;
-
-  // const currentSongIndex = currentSong
-  //   ? playlist.findIndex((song) => song.id === currentSong.id)
-  //   : -1;
-  // console.log("index", currentSongIndex);
-
-  // const updateProgress = () => {
-  //   if (songPlayed && songPlayed.playing()) {
-  //     const currentTime = songPlayed?.seek();
-  //     if (currentTime !== null) {
-  //       setCurrentTime(currentTime);
-  //       setProgress((currentTime / songDuration) * 100);
-  //     }
-  //   }
-
-  //   animationRef.current = requestAnimationFrame(updateProgress);
-  // };
-
-  // useEffect(() => {
-  //   animationRef.current = requestAnimationFrame(updateProgress);
-  //   // Clear animation frame on component unmount
-  //   return () => cancelAnimationFrame(animationRef.current);
-  // }, [currentSongs[activeSong]]);
-
-  // useLayoutEffect(() => {
-  //   //the following if statement will prevent the useEffect from running on the first render.
-  //   if (firstUpdate.current) {
-  //     firstUpdate.current = false;
-  //     return;
-  //   }
-  //   if (!currentSongs[activeSong]) {
-  //     return;
-  //   }
-  //   // console.log("me");
-  //   changeSong(currentSongs[activeSong]?.audio_url);
-  // }, []);
-
-  // const playSound = () => {
-  //   if (!songPlayed) {
-  //     return;
-  //   }
-  //   songPlayed.play();
-  // };
-
-  // const changeSong = (songSrc) => {
-  //   if (songPlayed) {
-  //     songPlayed.stop();
-  //   }
-  //   let sound = new Howl({
-  //     src: [songSrc],
-  //     html5: true,
-  //     onend: () => {
-  //       setCurrentTime(0);
-  //       if (currentSongs.length > 1) {
-  //         handleNext();
-  //       } else {
-  //         setIsPaused(true);
-  //       }
-  //     },
-  //     onplay: () => {
-  //       setSongDuration(songPlayed?.duration());
-  //       setCurrentTime(songPlayed?.seek());
-
-  //       updateProgress();
-  //     },
-  //   });
-  //   setActiveSong(sound);
-  //   setSongPlayed(sound);
-  //   sound.play();
-  //   setIsPaused(false);
-  // };
-
-  // const pauseSound = () => {
-  //   if (songPlayed) {
-  //     songPlayed.pause();
-  //     setIsPaused(true);
-  //   }
-  // };
-
-  // const togglePlayPause = () => {
-  //   if (isPaused) {
-  //     playSound();
-  //     setIsPaused(false);
-  //   } else {
-  //     pauseSound();
-  //     setIsPaused(true);
-  //   }
-  // };
-  // const handleNext = () => {
-  //   if (activeSong >= currentSongs.length - 1) {
-  //     setActiveSong(0);
-  //     setCurrentSongs(currentSongs[0]);
-  //   } else {
-  //     setActiveSong((prev) => prev + 1);
-  //     setCurrentSongs(currentSongs[activeSong + 1]);
-  //   }
-  // };
-
-  // const handlePrevious = () => {
-  //   if (activeSong === 0) {
-  //     let lastTrackIndex = currentSongs.length - 1;
-  //     setActiveSong(lastTrackIndex);
-  //     setCurrentSongs(currentSongs[lastTrackIndex]);
-  //   } else {
-  //     setActiveSong((prev) => prev - 1);
-  //     setCurrentSongs(currentSongs[activeSong - 1]);
-  //   }
-  // };
-  // const formatTime = (seconds) => {
-  //   const minutes = Math.floor(seconds / 60);
-  //   const remainingSeconds = Math.floor(seconds % 60);
-  //   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  //   const formattedSeconds =
-  //     remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-  //   return `${formattedMinutes}:${formattedSeconds}`;
-  // };
-
-  // const handleSeek = (e) => {
-  //   if (songPlayed) {
-  //     const seekTime = (e.target.value / 100) * songPlayed.duration();
-  //     songPlayed.seek(seekTime);
-  //     setCurrentTime(seekTime);
-  //   }
-  // };
-
-  // const handleVolumeChange = (e) => {
-  //   const volumeLevel = e.target.value / 100;
-  //   songPlayed.volume(volumeLevel);
-  // };
-
   const navigate = useNavigate();
   const logOut = () => {
     try {
@@ -206,11 +69,6 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
       console.error("Error during logout:", error);
     }
   };
-
-  // console.log("songDuration", songDuration);
-  // console.log("currentTime", currentTime);
-
-  // profile drop down start
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -261,12 +119,6 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
                 targetLink={"/favorites"}
                 active={currActiveScrn === "favourites"}
               />
-            </div>
-          </div>
-          <div className="px-5">
-            <div className="border border-gray-100 text-white w-1/3 flex px-2 py-1 rounded-full items-center justify-center hover:border-white cursor-pointer">
-              <Icon icon={"gis:earth"} />
-              <div className="ml-2 text-sm font-semibold">English</div>
             </div>
           </div>
         </div>
@@ -334,7 +186,6 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
                         <button
                           className="cursor-pointer text-gray-800 hover:bg-gray-200 p-2 rounded-md"
                           onClick={() => {
-                            console.log("chandan");
                             logOut();
                           }}
                         >

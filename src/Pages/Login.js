@@ -31,6 +31,7 @@ const LoginComponent = () => {
     });
 
     response = await response.json();
+    console.log("status", response.status);
     if (response && response.token) {
       const token = response.token;
       setToken(token);

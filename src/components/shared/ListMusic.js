@@ -122,7 +122,7 @@ const ListMusic = () => {
     setCurrentSongs(songs);
     setActiveSong(index);
   };
-  console.log("list song", currentSongs);
+  // console.log("list song", currentSongs);
   return (
     <LoggedInContainer>
       <div className="text-white text-xl font-semibold pb-4 pl-2 pt-8">

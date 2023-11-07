@@ -117,7 +117,7 @@ const Player = () => {
     setDuration(seconds);
     progressBarRef.current.max = seconds;
   };
-  console.log("curr song", currentSongs);
+  // console.log("curr song", currentSongs);
   return (
     <div className="w-full h-1/10 bg-black bg-opacity-30 text-white flex items-center px-4">
       <audio

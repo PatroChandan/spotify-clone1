@@ -20,11 +20,11 @@ const LoggedInHome = () => {
 
   //
 
-  console.log("album", albumData);
-  console.log("romatic", romaticData);
-  console.log("excited", excitedData);
-  console.log("happy", happyData);
-  console.log("sad", sadData);
+  // console.log("album", albumData);
+  // console.log("romatic", romaticData);
+  // console.log("excited", excitedData);
+  // console.log("happy", happyData);
+  // console.log("sad", sadData);
 
   return (
     // <LoggedInContainer currActiveScrn={"home"} cardsData={albumData} limit={albumData.length}/>
@@ -70,7 +70,6 @@ export const PlaylistView = ({ titleText, cardsData }) => {
         {titleText === "Top album"
           ? !!cardsData.length &&
             cardsData?.slice(0, 4)?.map((item, index) => {
-              console.log("item 1", item);
               return (
                 <Card
                   key={item._id}
@@ -88,7 +87,6 @@ export const PlaylistView = ({ titleText, cardsData }) => {
             })
           : !!cardsData.length &&
             cardsData?.slice(0, 4)?.map((item, index) => {
-              console.log("item 2", item);
               return (
                 <Card
                   key={item._id}
@@ -114,10 +112,10 @@ export const PlaylistView = ({ titleText, cardsData }) => {
 const Card = ({ keyId, title, mood, imgUrl, titleText, idx }) => {
   const navigate = useNavigate();
   const handleListOfMusic = () => {
-    console.log("keyId", keyId);
-    console.log("mood", mood);
-    console.log("titleText", titleText);
-    console.log("index", idx);
+    // console.log("keyId", keyId);
+    // console.log("mood", mood);
+    // console.log("titleText", titleText);
+    // console.log("index", idx);
     navigate(`/listmusic/${keyId}`, {
       state: { mood: mood, title: titleText, index: idx },
     });
