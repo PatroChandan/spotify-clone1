@@ -50,7 +50,6 @@ const ListMusic = () => {
   }, []);
 
   useEffect(() => {
-    // Load liked songs from local storage on component mount
     const storedLikedSongs = localStorage.getItem("likedSongs");
     if (storedLikedSongs) {
       setLikedSongs(JSON.parse(storedLikedSongs));
@@ -58,12 +57,10 @@ const ListMusic = () => {
   }, []);
 
   useEffect(() => {
-    // Save liked songs to local storage whenever it changes
     localStorage.setItem("likedSongs", JSON.stringify(likedSongs));
   }, [likedSongs]);
 
   useEffect(() => {
-    // Create the Howl instance when the component mounts
     if (currentSongs.length > 0 && Array.isArray(currentSongs[0]?.songs)) {
       const sound = new Howl({
         src: [currentSongs[activeSong]?.audio_url],
@@ -82,7 +79,6 @@ const ListMusic = () => {
 
       setSongDuartion(sound);
 
-      // Cleanup the Howl instance on component unmount
       return () => {
         sound.unload();
       };
