@@ -11,6 +11,7 @@ import SingleSongCard from "../components/shared/SingleSongCard";
 import { useAuthContext } from "../contexts/AuthContext";
 import Player from "../components/Player";
 import AccountMenu from "../components/shared/AccountMenu";
+import Navigation from "../components/shared/Navigation";
 
 const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
   Howler.volume(1.0);
@@ -103,8 +104,11 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
         <div className="h-full w-4/5 bg-app-black overflow-auto">
           {currActiveScrn === "search" ? (
             <div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-between">
+              <div className="w-1/6 flex h-full justify-start pl-5">
+                <Navigation />
+              </div>
               <div
-                className={`w-1/3 p-3 text-sm rounded-full bg-gray-800 px-5 flex text-white space-x-3 items-center ml-8 ${
+                className={`w-2/6 p-3 text-sm rounded-full bg-gray-800 px-5 flex text-white space-x-3 items-center ml-8 ${
                   isInputFocused ? "border border-white" : ""
                 }`}
               >
@@ -131,9 +135,10 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
                 />
               </div>
               {/* <SearchPage/> */}
-              <div className="w-1/3 flex h-full">
-                <div className="w-3/5 flex justify-around items-center"></div>
-                <div className="w-2/5 flex justify-around h-full items-center relative">
+              <div className="w-1/6 flex h-full"></div>
+              <div className="w-2/6 flex h-full">
+                <div className="w-1/2 flex justify-around items-center"></div>
+                <div className="w-1/2 flex justify-around h-full items-center relative">
                   {/* <div className="relative">
                     <div
                       className="cursor-pointer bg-gray-500 rounded-full"
@@ -180,13 +185,17 @@ const LoggedInContainer = ({ children, currActiveScrn, cardsData, limit }) => {
             </div>
           ) : (
             <div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-end">
-              <div className="w-1/3 flex h-full">
-                <div className="w-3/5 flex justify-around items-center">
+              <div className="w-1/6 flex h-full justify-start pl-5">
+                <Navigation />
+              </div>
+              <div className="w-3/6 flex h-full"></div>
+              <div className="w-2/6 flex h-full">
+                <div className="w-1/2 flex justify-around items-center">
                   {/* <TextWithHover displayText={"Premium"}/>
                             <TextWithHover displayText={"Support"}/> */}
                   {/* <div className="h-1/2 border-r border-white"></div> */}
                 </div>
-                <div className="w-2/5 flex justify-around h-full items-center relative">
+                <div className="w-1/2 flex justify-around h-full items-center relative">
                   {/* <div className="relative">
                     <div
                       className="cursor-pointer bg-gray-200 rounded-full"
