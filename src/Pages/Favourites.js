@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import LoggedInContainer from "../containers/LoggedInContainer";
 import {
   addSongToFavorites,
+  makeAuthenticatedGETRequest,
   removeSongFromFavorites,
 } from "../utils/serverHelpers";
 import { useLocation, useParams } from "react-router-dom";
@@ -10,6 +11,7 @@ import { Icon } from "@iconify/react";
 import { Howl, Howler } from "howler";
 import useApi from "../Hooks/useApi";
 import { useSongContext } from "../contexts/songContext";
+import { backendUrl } from "../utils/config";
 
 const Favorites = () => {
   const { currentSongs, setCurrentSongs, activeSong, setActiveSong } =
@@ -21,10 +23,38 @@ const Favorites = () => {
   const [songIndex, setSongIndex] = useState(0);
   const [isFavourite, setIsFavourite] = useState(false);
   const [likedSongs, setLikedSongs] = useState([]);
+  const [favoritesData, setFavoritesData] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("spotify_token");
+        const response = await fetch(backendUrl + "/music/favorites/like", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            projectId: "f104bi07c490",
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data. Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setFavoritesData(result.data);
+        // console.log("res", result);
+      } catch (error) {
+        console.error("Error have done on Favorites:", error);
+      }
+    };
+
+    fetchData();
+  }, [likedSongs]);
+
   // console.log("chandan",id);
 
-  const { data: favoritesData } = useApi("/music/favorites/like");
-  console.log("fav song", favoritesData);
+  // const { data: favoritesData } = useApi("/music/favorites/like");
 
   useEffect(() => {
     if (currentSongs.length > 0 && Array.isArray(currentSongs[0]?.songs)) {
@@ -58,10 +88,23 @@ const Favorites = () => {
       remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
     return `${formattedMinutes}:${formattedSeconds}`;
   };
+
+  useEffect(() => {
+    const storedLikedSongs = localStorage.getItem("likedSongs");
+    if (storedLikedSongs) {
+      setLikedSongs(JSON.parse(storedLikedSongs));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("likedSongs", JSON.stringify(likedSongs));
+  }, [likedSongs]);
+
   const handleLikeToggle = async (songId) => {
     try {
       if (likedSongs.includes(songId)) {
         await removeSongFromFavorites("/music/favorites/like", songId);
+
         setIsFavourite(false);
       } else {
         await addSongToFavorites("/music/favorites/like", songId);
@@ -82,7 +125,7 @@ const Favorites = () => {
     setCurrentSongs(songs);
     setActiveSong(index);
   };
-  //   console.log("list song", currentSongs);
+
   return (
     <LoggedInContainer currActiveScrn={"favourites"}>
       <div className="text-white text-xl font-semibold pb-4 pl-2 pt-8">
