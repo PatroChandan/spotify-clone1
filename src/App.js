@@ -34,7 +34,6 @@ function App() {
         {authenticated ? (
           <Routes>
             <Route path="/" element={<LoggedInHome />} />
-            <Route path="/myMusic" element={<MyMusic />} />
             <Route path="/details" element={<Details />} />
             <Route path="/searchpage" element={<SearchPage />} />
             <Route path="/listmusic/:id" element={<ListMusic />} />
