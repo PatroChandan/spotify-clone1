@@ -9,7 +9,6 @@ import { useLocation, useParams } from "react-router-dom";
 
 import { Icon } from "@iconify/react";
 import { Howl, Howler } from "howler";
-import useApi from "../Hooks/useApi";
 import { useSongContext } from "../contexts/songContext";
 import { backendUrl } from "../utils/config";
 
@@ -20,7 +19,6 @@ const Favorites = () => {
   const location = useLocation();
   const { id } = useParams();
   const [songDuartion, setSongDuartion] = useState(0);
-  const [songIndex, setSongIndex] = useState(0);
   const [isFavourite, setIsFavourite] = useState(false);
   const [likedSongs, setLikedSongs] = useState([]);
   const [favoritesData, setFavoritesData] = useState({});
@@ -51,10 +49,6 @@ const Favorites = () => {
 
     fetchData();
   }, [likedSongs]);
-
-  // console.log("chandan",id);
-
-  // const { data: favoritesData } = useApi("/music/favorites/like");
 
   useEffect(() => {
     if (currentSongs.length > 0 && Array.isArray(currentSongs[0]?.songs)) {

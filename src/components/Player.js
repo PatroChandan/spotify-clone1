@@ -188,6 +188,7 @@ const Player = () => {
             step="1"
             value={currentTime}
             onChange={handleSeek}
+            style={{ background: "green" }}
           />
           {/* <span className="time">{formatTime(songPlayed?.duration())}</span> */}
           <span className="time">{formatTime(duration)}</span>
@@ -197,7 +198,7 @@ const Player = () => {
         <div className="w-full flex justify-end  items-center ">
           <input
             type="range"
-            className="2xl:w-40 lg:w-32 md:w-32 h-1 ml-2"
+            className="2xl:w-40 lg:w-32 md:w-32 h-1 ml-2 text-green-700"
             onChange={handleVolumeChange}
           />
           <Icon
